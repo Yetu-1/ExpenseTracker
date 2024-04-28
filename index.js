@@ -36,6 +36,22 @@ app.get("/", (req, res) => {
     res.render("index.ejs");
 });
 
+// Route from Login/Sign up button
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email", 'https://www.googleapis.com/auth/gmail.readonly'],
+  })
+);
+
+// redirect route from the passport authenticattion
+app.get(
+  "/auth/google/secrets",
+  passport.authenticate("google", {
+    successRedirect: "/secrets",
+    failureRedirect: "/login",
+  })
+);
 
 passport.use(
     "google",
@@ -50,10 +66,13 @@ passport.use(
         await listOfLabels(accessToken);
         await getLatestMessage(accessToken);
         try {
+          // Check if user already exists in the database
           const result = await db.query("SELECT * FROM users WHERE email = $1", [
             profile.email,
           ]);
+
           if (result.rows.length === 0) {
+            // if user does not exist add 
             const newUser = await db.query(
               "INSERT INTO users (email, password) VALUES ($1, $2)",
               [profile.email, "google"]
