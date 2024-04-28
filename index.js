@@ -53,47 +53,111 @@ app.get(
   })
 );
 
-passport.use(
-    "google",
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/auth/google/secrets",
-        userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
-       },
-      async (accessToken, refreshToken, profile, cb) => {
-        await listOfLabels(accessToken);
-        await getLatestMessage(accessToken);
-        try {
-          // Check if user already exists in the database
-          const result = await db.query("SELECT * FROM users WHERE email = $1", [
-            profile.email,
-          ]);
+async function listOfLabels(accessToken) {
 
-          if (result.rows.length === 0) {
-            // if user does not exist add 
-            const newUser = await db.query(
-              "INSERT INTO users (email, password) VALUES ($1, $2)",
-              [profile.email, "google"]
-            );
-            return cb(null, newUser.rows[0]);
-          } else {
-            return cb(null, result.rows[0]);
-          }
-        } catch (err) {
-          return cb(err);
-        }
-      }
-    )
-  );
-  passport.serializeUser((user, cb) => {
-    cb(null, user);
-  });
+  try{ 
+    const oauth2Client = new google.auth.OAuth2();
+    oauth2Client.setCredentials({ access_token: accessToken });
+
+    const gmail = google.gmail({version: 'v1', auth: oauth2Client});
   
-  passport.deserializeUser((user, cb) => {
-    cb(null, user);
-  });
+    const response = await gmail.users.labels.list({
+      userId: "me",
+    });
+  
+    const labels = response.data.labels;
+
+    if(!labels || labels.length == 0){
+      console.log("No labels were found!");
+    }else {
+      console.log("Labels: ");
+      labels.forEach((label) => {
+        console.log(`- ${label.name}`); 
+      });
+    }
+
+  }catch(err) {
+    console.log("Error fetching labels", err);
+  }
+}
+
+async function getLatestMessage(accessToken){
+  try{ 
+    const oauth2Client = new google.auth.OAuth2();
+    oauth2Client.setCredentials({ access_token: accessToken });
+
+    const gmail = google.gmail({version: 'v1', auth: oauth2Client});
+  
+    const response = await gmail.users.messages.list({
+      userId: "me",
+      maxResults: 1,
+    });
+  
+    let latestMessageId = response.data.messages[0].id;
+    console.log("[MSG ID]: ", latestMessageId);
+
+    try{
+      const messageContent = await gmail.users.messages.get({
+        userId: "me",
+        id: latestMessageId,
+      })
+
+      const body = JSON.stringify(messageContent.data.payload.body.data);
+      console.log("[MSG BASE64]", body);
+      mailBody = new Buffer.from(body, 'base64').toString();
+      console.log("[MSG]: ", mailBody);
+      
+    }catch(err){
+      console.log("Error getting message by id!", err);
+    }
+
+  }catch(err) {
+    console.log("Error fetching messages!", err);
+  }
+}
+
+passport.use(
+  "google",
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/google/secrets",
+      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+      },
+    async (accessToken, refreshToken, profile, cb) => {
+      await listOfLabels(accessToken);
+      await getLatestMessage(accessToken);
+      try {
+        // Check if user already exists in the database
+        const result = await db.query("SELECT * FROM users WHERE email = $1", [
+          profile.email,
+        ]);
+
+        if (result.rows.length === 0) {
+          // if user does not exist add new user to database
+          const newUser = await db.query(
+            "INSERT INTO users (email, password) VALUES ($1, $2)",
+            [profile.email, "google"]
+          );
+          return cb(null, newUser.rows[0]);
+        } else {
+          return cb(null, result.rows[0]);
+        }
+      } catch (err) {
+        return cb(err);
+      }
+    }
+  )
+);
+
+passport.serializeUser((user, cb) => {
+  cb(null, user);
+});
+
+passport.deserializeUser((user, cb) => {
+  cb(null, user);
+});
 
 app.listen(port, ()=> {
     console.log(`Server running on port ${port}`);
