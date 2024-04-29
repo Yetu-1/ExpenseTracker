@@ -7,8 +7,15 @@ import GoogleStrategy from "passport-google-oauth2";
 import session from "express-session";
 import { google } from "googleapis"
 
+// TODO :
+/**
+ * display first name, surname user, and Image from gmail profile (console.log(req.user))
+ */
+// global scope variables
+let mailBody ='';
+let userProfile = {};
 
-// Loads .env file contents into process.env
+// Loads .env file contents into process.env so we can have access to the variables
 env.config();
 
 // create a new postgres database client
@@ -33,7 +40,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      maxAge: 1000 * 60,
+      maxAge: 1000 * 60 * 60,
     },
   })
 );
@@ -45,7 +52,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
-    res.render("index.ejs");
+    res.render("login.ejs");
 });
 
 // Logout Route to log out user
@@ -58,6 +65,11 @@ app.get("/logout", (req, res) => {
   });
 });
 
+// Logout Route to log out user
+app.get("/login", (req, res) => {
+    res.render("login.ejs");
+});
+
 // Route from Login/Sign up button
 app.get(
   "/auth/google",
@@ -68,12 +80,20 @@ app.get(
 
 // redirect route from the passport authenticattion
 app.get(
-  "/auth/google/secrets",
+  "/auth/google/home",
   passport.authenticate("google", {
-    successRedirect: "/secrets",
+    successRedirect: "/home",
     failureRedirect: "/login",
   })
 );
+
+app.get("/home", (req, res) => {
+  console.log(req.user);
+  console.log(userProfile);
+  if(req.isAuthenticated()) {
+    res.render("home.ejs", {fName: userProfile.family_name, lName: userProfile.given_name, img: userProfile._json.picture});
+  }
+});
 
 async function listOfLabels(accessToken) {
 
@@ -144,12 +164,13 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/secrets",
+      callbackURL: "http://localhost:3000/auth/google/home",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
       },
     async (accessToken, refreshToken, profile, cb) => {
       await listOfLabels(accessToken);
       await getLatestMessage(accessToken);
+      userProfile = profile;
       try {
         // Check if user already exists in the database
         const result = await db.query("SELECT * FROM users WHERE email = $1", [
