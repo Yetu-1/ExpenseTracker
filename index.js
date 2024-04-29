@@ -26,6 +26,18 @@ db.connect();
 const app = new express();
 const port = 3000;
 
+// Session Initialization
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60,
+    },
+  })
+);
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -34,6 +46,16 @@ app.use(express.static("public"));
 
 app.get("/", (req, res) => {
     res.render("index.ejs");
+});
+
+// Logout Route to log out user
+app.get("/logout", (req, res) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
 });
 
 // Route from Login/Sign up button
@@ -134,15 +156,19 @@ passport.use(
           profile.email,
         ]);
 
+        const user = result.rows[0];
+
         if (result.rows.length === 0) {
           // if user does not exist add new user to database
-          const newUser = await db.query(
+          const rep = await db.query(
             "INSERT INTO users (email, password) VALUES ($1, $2)",
             [profile.email, "google"]
           );
-          return cb(null, newUser.rows[0]);
+          const newUser = rep.rows[0];
+
+          return cb(null, newUser);
         } else {
-          return cb(null, result.rows[0]);
+          return cb(null, user);
         }
       } catch (err) {
         return cb(err);
