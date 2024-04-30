@@ -183,6 +183,7 @@ function getTransactions(rawHtml) {
               value = $(element).text().trim();
             }
           });
+          // add key value pair to transactionInfo object
           transactionInfo[key] = value;
         }
       });
