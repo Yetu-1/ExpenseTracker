@@ -1,13 +1,24 @@
-import React, {useEffect, useStates} from "react"
+import React, {useEffect, useState} from "react"
 
 function App() {
+  const [userData, setUserData] = useState({});
+  
+  useEffect(() => {
+    fetch("/api").then((response) => {
+      return response.json()
+    }).then((data) => {
+      setUserData(data)
+    })
+  }, []); // Pass in an empty array so this runs only on the first render of the componenet
+  const me = {"hello" : "world"};
+  console.log("hi")
+  console.log(userData);
   return (
-    <div className="App">
-    <h1>Hello</h1>
-      {/* <h1>Home</h1>
-      <p>First Name: <%=locals.fName %> </p>
-      <p>Last Name: <%= locals.lName %> </p>
-      <img style="border-radius: 50px" src=<%=locals.img%> /> */}
+    <div>        
+      <h1>Home</h1>
+      <p>First Name: {(typeof userData.fName === 'undefined')? (<p>Loading...</p>) : userData.fName} </p>
+      <p>Last Name: {(typeof userData.fName === 'undefined')? (<p>Loading...</p>) : userData.lName}</p>
+      <img src={(typeof userData.fName === 'undefined')? "null": userData.img} /> 
     </div>
   );
 }

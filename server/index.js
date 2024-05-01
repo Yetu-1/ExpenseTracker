@@ -72,6 +72,10 @@ app.get(
   })
 );
 
+app.get("/api", (req, res) => {
+    res.json({fName: userProfile.family_name, lName: userProfile.given_name, img: userProfile._json.picture});
+});
+
 app.get("/home", (req, res) => {
   if(req.isAuthenticated()) {
     res.json({fName: userProfile.family_name, lName: userProfile.given_name, img: userProfile._json.picture});
