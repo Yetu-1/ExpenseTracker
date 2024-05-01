@@ -1,4 +1,5 @@
 import env from "dotenv"
+import pg from "pg"
 
 // Loads .env file contents into process.env so we can have access to the variables
 env.config();
@@ -21,7 +22,7 @@ async function createUser(profile) {
     try {
         // Check if user already exists in the database
         const result = await db.query("SELECT * FROM users WHERE email = $1", [
-          profile.email,
+          profile.email, 
         ]);
 
         const user = result.rows[0];
@@ -29,16 +30,15 @@ async function createUser(profile) {
         if (result.rows.length === 0) {
           // if user does not exist add new user to database
           const rep = await db.query(
-            "INSERT INTO users (email, password) VALUES ($1, $2)",
-            [profile.email, "google"]
+            "INSERT INTO users (email, password, firstname, lastname, picture) VALUES ($1, $2, $3, $4, $5)",
+            [profile.email, "google", profile.given_name, profile.family_name, profile._json.picture]
           );
-          const newUser = rep.rows[0];
-
-          return cb(null, newUser);
-        } else {
-          return cb(null, user);
+          user = rep.rows[0];
         }
+        return user;
       } catch (err) {
-        return cb(err);
+        return err;
       }
 }
+
+export {connectToDB, createUser};

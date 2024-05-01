@@ -1,11 +1,11 @@
 import bodyParser from "body-parser";
 import express from "express"
-import pg from "pg"
 import env from "dotenv"
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth2";
 import session from "express-session";
 import { getLatestMessage, listOfLabels } from "./services/emailparser.js";
+import { connectToDB, createUser } from "./services/dbQueries.js";
 
 // global scope variables
 let userProfile = {};
@@ -15,6 +15,21 @@ env.config();
 
 const app = new express();
 const port = 3000;
+
+const transaction = {
+  'Account Number': '0717996873',
+  'Transaction Location': 'OYIN JOLAYEMI ST V/I LAGOS',
+  Description: 'NIBSS Instant Payment Outward',
+  Amount: 'NGN 500.00',
+  'Value Date': '30-04-2024 11:50',
+  Remarks: '000013240430114750000033950037  TO ECO/David Yetu Salihu                                                                                                     REF:4150055771071799687350000202404301147',
+  'Time of Transaction': '30-04-2024 11:48',
+  'Document Number': '0',
+  'Current Balance': 'NGN  68,724.35',
+  'Available Balance': 'NGN   68,724.35'
+};
+
+console.log(transaction["Description"]);
 
 // Session Initialization
 app.use(
@@ -27,6 +42,8 @@ app.use(
     },
   })
 );
+// connect to database
+connectToDB();
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -72,8 +89,8 @@ app.get(
 
 app.get("/home", (req, res) => {
   if(req.isAuthenticated()) {
-    // res.render("home.ejs", {fName: userProfile.family_name, lName: userProfile.given_name, img: userProfile._json.picture});
-    res.send(mailBody)
+    res.render("home.ejs", {fName: userProfile.family_name, lName: userProfile.given_name, img: userProfile._json.picture});
+    //res.send(mailBody)
   }
 });
 
@@ -90,28 +107,13 @@ passport.use(
       //await listOfLabels(accessToken);
       await getLatestMessage(accessToken);
       userProfile = profile;
-      try {
-        // Check if user already exists in the database
-        const result = await db.query("SELECT * FROM users WHERE email = $1", [
-          profile.email,
-        ]);
-
-        const user = result.rows[0];
-
-        if (result.rows.length === 0) {
-          // if user does not exist add new user to database
-          const rep = await db.query(
-            "INSERT INTO users (email, password) VALUES ($1, $2)",
-            [profile.email, "google"]
-          );
-          const newUser = rep.rows[0];
-
-          return cb(null, newUser);
-        } else {
-          return cb(null, user);
-        }
-      } catch (err) {
-        return cb(err);
+      // return user object and store in session if successful or return error msg if unsuccessful 
+      const response = await createUser(profile);
+      if(response.id){ // if a user object was returned
+        const user = response;
+        return cb(null, user);
+      } else {
+        return cb(response); // if an error occurred (response = err)
       }
     }
   )

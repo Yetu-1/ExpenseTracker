@@ -56,9 +56,8 @@ async function listOfLabels(accessToken) {
         const body = JSON.stringify(messageContent.data.payload.body.data);
         // console.log("[MSG BASE64]", body);
         mailBody = new Buffer.from(body, 'base64').toString();
-        // console.log("[MSG]: ", mailBody);
-        getTransactions(mailBody);
-        
+        console.log("[MSG]: ", mailBody);
+        getTransactions(mailBody);   
       }catch(err){
         console.log("Error getting message by id!", err);
       }
@@ -82,6 +81,7 @@ async function listOfLabels(accessToken) {
         $(element).find('tr').each((index, element) => {
           let key = "";
           let value = "";
+          const length = $(element).find('td').length;
           // if there are 3 data cells (i.e it has a valid key value pair of the form  'x' ':' 'y')
           if(length === 3) {
             // extract the first and third data cells as the key value pair (second element is this ':' char )
