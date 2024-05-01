@@ -74,7 +74,7 @@ app.get(
 
 app.get("/home", (req, res) => {
   if(req.isAuthenticated()) {
-    res.render("home.ejs", {fName: userProfile.family_name, lName: userProfile.given_name, img: userProfile._json.picture});
+    res.json({fName: userProfile.family_name, lName: userProfile.given_name, img: userProfile._json.picture});
     //res.send(mailBody)
   }
 });
@@ -85,7 +85,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/home",
+      callbackURL: "http://localhost:4000/auth/google/home",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
       },
     async (accessToken, refreshToken, profile, cb) => {
