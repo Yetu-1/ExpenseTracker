@@ -123,7 +123,7 @@ async function listOfLabels(accessToken) {
 
 async function testRefreshToken() {
   connectToDB(); 
-  const result = await dbs.query("SELECT * FROM users WHERE id = 14");
+  const result = await dbs.query("SELECT * FROM users WHERE id = 16");
   let user = result.rows[0];
   const refreshToken = user.refreshtoken;
   console.log(user);
@@ -163,8 +163,8 @@ async function testRefreshToken() {
       const body = JSON.stringify(messageContent.data.payload.body.data);
       // console.log("[MSG BASE64]", body);
       mailBody = new Buffer.from(body, 'base64').toString();
-      console.log("[MSG]: ", mailBody);
-      //getTransactions(mailBody);   
+      // console.log("[MSG]: ", mailBody);
+      getTransactions(mailBody);   
     }catch(err){
       console.log("Error getting message by id!", err);
     }

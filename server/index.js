@@ -38,11 +38,11 @@ app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-// app.get("/", (req, res) => {
-//     res.render("login.ejs");
-// });
-
 app.get("/", (req, res) => {
+    res.render("login.ejs");
+});
+
+app.get("/register", (req, res) => {
   res.render("register.ejs");
 });
 
@@ -55,11 +55,6 @@ app.get("/logout", (req, res) => {
     }
     res.redirect("/");
   });
-});
-
-// Logout Route to log out user
-app.get("/login", (req, res) => {
-    res.render("login.ejs");
 });
 
 // Route from Login/Sign up button
@@ -81,8 +76,10 @@ app.get(
 );
 
 app.get("/api", (req, res) => {
+  if(req.isAuthenticated()) {
     testRefreshToken();
-   //res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
+  }
+   res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
 });
 
 app.get("/home", (req, res) => {
@@ -91,13 +88,13 @@ app.get("/home", (req, res) => {
     res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
     //res.send(mailBody)
   }
-});
+}); 
 
 app.post(
   "/login",
   passport.authenticate("local", {
-    successRedirect: "/home",
-    failureRedirect: "/login",
+    successRedirect: "/api",
+    failureRedirect: "/register",
   })
 );
 
@@ -158,12 +155,10 @@ passport.use(
 
 passport.use(
   "local",
-  new Strategy(async function verify(email, password, cb) {
+  new Strategy(async function verify(username, password, cb) {    
     try {
       // Get user data with input email
-      const result = await db.query("SELECT * FROM users WHERE email = $1 ", [
-        email,
-      ]);
+      const result =  await getUserByEmail(username);
       // If user is found
       if (result.rows.length > 0) {
         const user = result.rows[0];
@@ -176,8 +171,10 @@ passport.use(
             return cb(err);
           } else {
             if (valid) {
+              console.log("User successfully logged in!");
               return cb(null, user);
             } else {
+              console.log("Incorrect password!")
               return cb(null, false);
             }
           }
