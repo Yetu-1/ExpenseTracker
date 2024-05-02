@@ -2,13 +2,16 @@ import bodyParser from "body-parser";
 import express from "express"
 import env from "dotenv"
 import passport from "passport";
+import { Strategy } from "passport-local";
 import GoogleStrategy from "passport-google-oauth2";
 import session from "express-session";
 import { getLatestMessage, listOfLabels, testRefreshToken} from "./services/emailparser.js";
-import { connectToDB, createUser } from "./services/dbQueries.js";
+import { connectToDB, createUser, getUserByEmail } from "./services/dbQueries.js";
+import bcrypt from "bcrypt";
 
 // global scope variables
-
+const saltRounds = 10;
+let hashedPassword = '';
 // Loads .env file contents into process.env so we can have access to the variables
 env.config();
 
@@ -35,9 +38,14 @@ app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
+// app.get("/", (req, res) => {
+//     res.render("login.ejs");
+// });
+
 app.get("/", (req, res) => {
-    res.render("login.ejs");
+  res.render("register.ejs");
 });
+
 
 // Logout Route to log out user
 app.get("/logout", (req, res) => {
@@ -85,6 +93,44 @@ app.get("/home", (req, res) => {
   }
 });
 
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/home",
+    failureRedirect: "/login",
+  })
+);
+
+app.post("/register", async (req, res) => {
+  const email = req.body.username;
+  const password = req.body.password;
+
+  try {
+    // Check if user already Exists
+    const rep = await getUserByEmail(email);
+    // If user exists redirect user to the login page
+    if (rep.rows.length > 0) {
+      res.redirect("/login");
+    } else {
+      // Hash the input password
+      bcrypt.hash(password, saltRounds, async (err, hash) => {
+        if (err) {
+          console.error("Error hashing password:", err);
+        } else {
+          hashedPassword = hash;
+          res.redirect("/auth/google");
+          // req.login(user, (err) => {
+          //   console.log("success");
+          //   res.redirect("/secrets");
+          // });
+        }
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 passport.use(
   "google",
   new GoogleStrategy(
@@ -99,7 +145,7 @@ passport.use(
       console.log(refreshToken);
       await getLatestMessage(accessToken);
       // return user object and store in session if successful or return error msg if unsuccessful 
-      const response = await createUser(profile, refreshToken);
+      const response = await createUser(profile, refreshToken, hashedPassword);
       if(response.email){ // if a user object was returned
         const user = response;
         return cb(null, user);
@@ -108,6 +154,41 @@ passport.use(
       }
     }
   )
+);
+
+passport.use(
+  "local",
+  new Strategy(async function verify(email, password, cb) {
+    try {
+      // Get user data with input email
+      const result = await db.query("SELECT * FROM users WHERE email = $1 ", [
+        email,
+      ]);
+      // If user is found
+      if (result.rows.length > 0) {
+        const user = result.rows[0];
+        // Get user stored hashed password
+        const storedHashedPassword = user.password;
+        // Compare stored hased password with input password
+        bcrypt.compare(password, storedHashedPassword, (err, valid) => {
+          if (err) {
+            console.error("Error comparing passwords:", err);
+            return cb(err);
+          } else {
+            if (valid) {
+              return cb(null, user);
+            } else {
+              return cb(null, false);
+            }
+          }
+        });
+      } else {
+        return cb("User not found");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  })
 );
 
 passport.serializeUser((user, cb) => {
