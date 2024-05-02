@@ -4,7 +4,7 @@ import env from "dotenv"
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth2";
 import session from "express-session";
-import { getLatestMessage, listOfLabels } from "./services/emailparser.js";
+import { getLatestMessage, listOfLabels, testRefreshToken} from "./services/emailparser.js";
 import { connectToDB, createUser } from "./services/dbQueries.js";
 
 // global scope variables
@@ -73,7 +73,8 @@ app.get(
 );
 
 app.get("/api", (req, res) => {
-    res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
+    testRefreshToken();
+   //res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
 });
 
 app.get("/home", (req, res) => {

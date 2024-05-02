@@ -1,6 +1,24 @@
 import { google } from "googleapis"
 import * as cheerio from 'cheerio';
+import env from "dotenv"
+import pg from "pg"
 
+// Loads .env file contents into process.env so we can have access to the variables
+env.config();
+
+// create a new postgres database client
+const dbs = new pg.Client({
+    user: process.env.PG_USER,
+    host: process.env.PG_HOST,
+    database: process.env.PG_DATABASE,
+    password: process.env.PG_PASSWORD,
+    port: process.env.PG_PORT,
+});
+
+// connect to the postgres database
+function connectToDB() {
+    dbs.connect();
+}
 
 let mailBody ='';
 
@@ -103,7 +121,60 @@ async function listOfLabels(accessToken) {
     return transactionInfo;
   }
 
-export { getLatestMessage, listOfLabels,}
+async function testRefreshToken() {
+  connectToDB(); 
+  const result = await dbs.query("SELECT * FROM users WHERE id = 14");
+  let user = result.rows[0];
+  const refreshToken = user.refreshtoken;
+  console.log(user);
+  console.log(refreshToken);
+
+  try{ 
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      "http://localhost:4000/auth/google/home", // Redirect URL
+    );
+    oauth2Client.setCredentials({
+      refresh_token: refreshToken
+    });
+    const result = await oauth2Client.getAccessToken();
+    const accessToken = result.token;
+    console.log(accessToken);
+
+    oauth2Client.setCredentials({ access_token: accessToken });
+
+    const gmail = google.gmail({version: 'v1', auth: oauth2Client});
+  
+    const response = await gmail.users.messages.list({
+      userId: "me",
+      maxResults: 1,
+    });
+  
+    let latestMessageId = response.data.messages[0].id;
+    console.log("[MSG ID]: ", latestMessageId);
+
+    try{
+      const messageContent = await gmail.users.messages.get({
+        userId: "me",
+        id: latestMessageId,
+        format: "full",
+      });
+      const body = JSON.stringify(messageContent.data.payload.body.data);
+      // console.log("[MSG BASE64]", body);
+      mailBody = new Buffer.from(body, 'base64').toString();
+      console.log("[MSG]: ", mailBody);
+      //getTransactions(mailBody);   
+    }catch(err){
+      console.log("Error getting message by id!", err);
+    }
+
+  }catch(err) {
+    console.log("Error fetching messages!", err);
+  }
+}
+
+export { getLatestMessage, listOfLabels, testRefreshToken}
 
 
 // sample transaction object
