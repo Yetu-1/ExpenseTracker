@@ -8,7 +8,6 @@ import { getLatestMessage, listOfLabels } from "./services/emailparser.js";
 import { connectToDB, createUser } from "./services/dbQueries.js";
 
 // global scope variables
-let userProfile = {};
 
 // Loads .env file contents into process.env so we can have access to the variables
 env.config();
@@ -59,6 +58,7 @@ app.get("/login", (req, res) => {
 app.get(
   "/auth/google",
   passport.authenticate("google", {
+    accessType: "offline", // Ensure that Google provides a refresh token
     scope: ["profile", "email", 'https://www.googleapis.com/auth/gmail.readonly'],
   })
 );
@@ -73,12 +73,13 @@ app.get(
 );
 
 app.get("/api", (req, res) => {
-    res.json({fName: userProfile.family_name, lName: userProfile.given_name, img: userProfile._json.picture});
+    res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
 });
 
 app.get("/home", (req, res) => {
   if(req.isAuthenticated()) {
-    res.json({fName: userProfile.family_name, lName: userProfile.given_name, img: userProfile._json.picture});
+    console.log(req.user);
+    res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
     //res.send(mailBody)
   }
 });
@@ -95,9 +96,8 @@ passport.use(
     async (accessToken, refreshToken, profile, cb) => {
       //await listOfLabels(accessToken);
       await getLatestMessage(accessToken);
-      userProfile = profile;
       // return user object and store in session if successful or return error msg if unsuccessful 
-      const response = await createUser(profile);
+      const response = await createUser(profile, refreshToken);
       if(response.id){ // if a user object was returned
         const user = response;
         return cb(null, user);
