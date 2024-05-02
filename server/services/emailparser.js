@@ -70,7 +70,7 @@ async function listOfLabels(accessToken) {
   function getTransactions(rawHtml) {
     // console.log(rawHtml);
     let transactionInfo = {};
-  
+    // convert raw html into jquery object
     const $ = cheerio.load(rawHtml);
     // const rawHtml = $('td'); // select Element
   

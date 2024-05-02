@@ -10,9 +10,7 @@ function App() {
       setUserData(data)
     })
   }, []); // Pass in an empty array so this runs only on the first render of the componenet
-  const me = {"hello" : "world"};
-  console.log("hi")
-  console.log(userData);
+
   return (
     <div>        
       <h1>Home</h1>
