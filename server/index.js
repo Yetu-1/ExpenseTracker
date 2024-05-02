@@ -95,10 +95,11 @@ passport.use(
       },
     async (accessToken, refreshToken, profile, cb) => {
       //await listOfLabels(accessToken);
+      console.log(refreshToken);
       await getLatestMessage(accessToken);
       // return user object and store in session if successful or return error msg if unsuccessful 
       const response = await createUser(profile, refreshToken);
-      if(response.id){ // if a user object was returned
+      if(response.email){ // if a user object was returned
         const user = response;
         return cb(null, user);
       } else {

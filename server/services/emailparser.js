@@ -102,6 +102,7 @@ async function listOfLabels(accessToken) {
     console.log(transactionInfo);
     return transactionInfo;
   }
+
 export { getLatestMessage, listOfLabels,}
 
 
