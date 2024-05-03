@@ -116,10 +116,6 @@ app.post("/register", async (req, res) => {
         } else {
           hashedPassword = hash;
           res.redirect("/auth/google");
-          // req.login(user, (err) => {
-          //   console.log("success");
-          //   res.redirect("/secrets");
-          // });
         }
       });
     }
