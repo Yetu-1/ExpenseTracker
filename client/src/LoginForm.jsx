@@ -11,9 +11,30 @@ function LoginForm() {
       label: "Sign In",
       msg: "Don't have an account? Sign Up"
     });
+    
+    const [user, setUser] = useState({
+      username: '',
+      password: '',
+    });
+
+    function handleChange(event) {
+      const {name, value} = event.target;
+      setUser((prevData) => {
+        return {
+          ...prevData, [name]: value
+        }
+      });  
+    }
 
     function handleSubmit() {
-
+      console.log(user);
+      fetch("/test", {
+        method: 'POST',
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(user)
+      }).catch((error) => {
+        console.log(error);
+      });
     }
 
     function handleAccount() {
@@ -39,37 +60,41 @@ function LoginForm() {
             alignItems: 'center',
           }}
       >
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" sx={{fontFamily: "McLaren"}}>
             {sign.label}
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <Button
-              type="submit"
+          <Box className="myForm" component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
               fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              {sign.label}
+              id="email"
+              label="Email Address"
+              name="username"
+              autoComplete="email"
+              autoFocus
+              onChange={handleChange}
+              value={user.username}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={handleChange}
+              value={user.password}
+            />
+            <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                {sign.label}
             </Button>
             <Grid container>
               <Grid item xs>
