@@ -27,8 +27,14 @@ function LoginForm() {
     }
 
     function handleSubmit() {
-      console.log(user);
-      fetch("/test", {
+      console.log(sign.label);
+      let url = '';
+      if(sign.label === "Sign In") {
+        url = "/login";
+      }else if (sign.label === "Sign Up"){
+        url = "/register";
+      }
+      fetch(url, {
         method: 'POST',
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(user)

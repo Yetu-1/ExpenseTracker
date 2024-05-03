@@ -78,9 +78,9 @@ app.get(
 
 app.get("/api", (req, res) => {
   if(req.isAuthenticated()) {
-    testRefreshToken();
+    // testRefreshToken();
+    res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
   }
-   res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
 });
 
 app.get("/home", (req, res) => {
@@ -102,27 +102,28 @@ app.post(
 app.post("/register", async (req, res) => {
   const email = req.body.username;
   const password = req.body.password;
-
-  try {
-    // Check if user already Exists
-    const rep = await getUserByEmail(email);
-    // If user exists redirect user to the login page
-    if (rep.rows.length > 0) {
-      res.redirect("/login");
-    } else {
-      // Hash the input password
-      bcrypt.hash(password, saltRounds, async (err, hash) => {
-        if (err) {
-          console.error("Error hashing password:", err);
-        } else {
-          hashedPassword = hash;
-          res.redirect("/auth/google");
-        }
-      });
-    }
-  } catch (err) {
-    console.log(err);
-  }
+  console.log(req.body);
+  res.sendStatus(200);
+  // try {
+  //   // Check if user already Exists
+  //   const rep = await getUserByEmail(email);
+  //   // If user exists redirect user to the login page
+  //   if (rep.rows.length > 0) {
+  //     res.redirect("/login");
+  //   } else {
+  //     // Hash the input password
+  //     bcrypt.hash(password, saltRounds, async (err, hash) => {
+  //       if (err) {
+  //         console.error("Error hashing password:", err);
+  //       } else {
+  //         hashedPassword = hash;
+  //         res.redirect("/auth/google");
+  //       }
+  //     });
+  //   }
+  // } catch (err) {
+  //   console.log(err);
+  // }
 });
 
 passport.use(

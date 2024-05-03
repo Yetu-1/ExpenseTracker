@@ -15,10 +15,10 @@ function App() {
   return (
     <div>   
       <LoginForm />     
-      {/* <h1>Home</h1>
+      <h1>Home</h1>
       <p>First Name: {(typeof userData.fName === 'undefined')? (<p>Loading...</p>) : userData.fName} </p>
       <p>Last Name: {(typeof userData.fName === 'undefined')? (<p>Loading...</p>) : userData.lName}</p>
-      <img src={(typeof userData.fName === 'undefined')? "null": userData.img} />  */}
+      <img src={(typeof userData.fName === 'undefined')? "null": userData.img} alt="profile" /> 
     </div>
   );
 }
