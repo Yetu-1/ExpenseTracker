@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
+import SignIn from "./login"
 
 function LoginForm() {
     const [sign, setSign] = useState({
@@ -114,6 +115,7 @@ function LoginForm() {
                 </Link>
               </Grid>
             </Grid>
+            <SignIn />
         </Box>
       </Box>
 
