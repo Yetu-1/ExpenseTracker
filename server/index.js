@@ -103,27 +103,27 @@ app.post("/register", async (req, res) => {
   const email = req.body.username;
   const password = req.body.password;
   console.log(req.body);
-  res.sendStatus(200);
-  // try {
-  //   // Check if user already Exists
-  //   const rep = await getUserByEmail(email);
-  //   // If user exists redirect user to the login page
-  //   if (rep.rows.length > 0) {
-  //     res.redirect("/login");
-  //   } else {
-  //     // Hash the input password
-  //     bcrypt.hash(password, saltRounds, async (err, hash) => {
-  //       if (err) {
-  //         console.error("Error hashing password:", err);
-  //       } else {
-  //         hashedPassword = hash;
-  //         res.redirect("/auth/google");
-  //       }
-  //     });
-  //   }
-  // } catch (err) {
-  //   console.log(err);
-  // }
+  // res.sendStatus(200);
+  try {
+    // Check if user already Exists
+    const rep = await getUserByEmail(email);
+    // If user exists redirect user to the login page
+    if (rep.rows.length > 0) {
+      res.redirect("/login");
+    } else {
+      // Hash the input password
+      bcrypt.hash(password, saltRounds, async (err, hash) => {
+        if (err) {
+          console.error("Error hashing password:", err);
+        } else {
+          hashedPassword = hash;
+          res.redirect("/auth/google");
+        }
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 passport.use(
