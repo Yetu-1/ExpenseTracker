@@ -9,6 +9,9 @@ import { getLatestMessage, listOfLabels, testRefreshToken} from "./services/emai
 import { connectToDB, createUser, getUserByEmail } from "./services/dbQueries.js";
 import bcrypt from "bcrypt";
 
+// import routes
+import userRouter from "./routes/indexROUTER.js"
+
 // global scope variables
 const saltRounds = 10;
 let hashedPassword = '';
@@ -39,9 +42,8 @@ app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.get("/", (req, res) => {
-    res.render("login.ejs");
-});
+app.get("/", userRouter);
+
 
 app.get("/register", (req, res) => {
   res.render("register.ejs");
