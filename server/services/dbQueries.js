@@ -48,4 +48,4 @@ async function createUser(profile, refreshToken, hashedPassword) {
       }
 }
 
-export {connectToDB, createUser, getUserByEmail};
+export {connectToDB, createUser, getUserByEmail, db};
