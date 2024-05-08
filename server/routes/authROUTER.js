@@ -41,17 +41,6 @@ authRouter.get(
   })
 );
 
-
-authRouter.get("/home", (req, res) => {
-  res.send("User Successfully registered");
-});
-
-authRouter.get("/login", (req, res) => {
-  res.send("User register error login");
-});
-authRouter.get("/register", (req, res) => {
-  res.render("register.ejs");
-});
 authRouter.post(
   "/login",
   passport.authenticate("local", {

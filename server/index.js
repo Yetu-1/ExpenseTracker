@@ -51,6 +51,7 @@ app.use("/auth", authRouter);
 app.get("/api", (req, res) => {
   if(req.isAuthenticated()) {
     // testRefreshToken();
+    console.log("here");
     res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
   }
 });

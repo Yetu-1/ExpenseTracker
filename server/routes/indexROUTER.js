@@ -22,4 +22,15 @@ router.get("/home", (req, res) => {
     }
 }); 
 
+router.get("/login", (req, res) => {
+    res.render("login.ejs");
+});
+
+router.get("/api", (req, res) => {
+    if(req.isAuthenticated()) {
+      // testRefreshToken();
+      res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
+    }
+});
+
 export default router;
