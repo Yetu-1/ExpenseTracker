@@ -2,8 +2,6 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import GoogleStrategy from "passport-google-oauth2";
 import env from "dotenv"
-import {db} from "./dbQueries.js"
-import { getLatestMessage, listOfLabels, testRefreshToken} from "./emailparser.js";
 import {createUser, getUserByEmail} from "./dbQueries.js"
 import bcrypt from "bcrypt";
 import { hashedPassword } from "../routes/authROUTER.js";

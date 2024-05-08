@@ -2,13 +2,9 @@ import bodyParser from "body-parser";
 import express from "express"
 import env from "dotenv"
 import passport from "passport";
-import { Strategy } from "passport-local";
-import GoogleStrategy from "passport-google-oauth2";
 import session from "express-session";
-import { getLatestMessage, listOfLabels, testRefreshToken} from "./services/emailparser.js";
-import { connectToDB, createUser, getUserByEmail } from "./services/dbQueries.js";
-import bcrypt from "bcrypt";
-// import my google strategy
+import { connectToDB } from "./services/dbQueries.js";
+// import my local strategy and google strategy
 import "./services/auth.js"
 
 // import routes
@@ -32,6 +28,7 @@ app.use(
     },
   })
 );
+
 // connect to database
 connectToDB();
 
@@ -46,15 +43,6 @@ app.use(express.static("public"));
 app.use("/", userRouter);
 
 app.use("/auth", authRouter);
-
-
-app.get("/api", (req, res) => {
-  if(req.isAuthenticated()) {
-    // testRefreshToken();
-    console.log("here");
-    res.json({fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
-  }
-});
 
 
 app.listen(port, ()=> {
