@@ -11,6 +11,7 @@ import bcrypt from "bcrypt";
 
 // import routes
 import userRouter from "./routes/indexROUTER.js"
+import authRouter from "./routes/authROUTER.js"
 
 // global scope variables
 const saltRounds = 10;
@@ -42,7 +43,10 @@ app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.get("/", userRouter);
+
+app.use("/", userRouter);
+
+app.use("/auth", authRouter);
 
 
 app.get("/register", (req, res) => {
