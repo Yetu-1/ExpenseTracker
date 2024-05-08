@@ -6,6 +6,7 @@ import {db} from "./dbQueries.js"
 import { getLatestMessage, listOfLabels, testRefreshToken} from "./emailparser.js";
 import {createUser, getUserByEmail} from "./dbQueries.js"
 import bcrypt from "bcrypt";
+import { hashedPassword } from "../routes/authROUTER.js";
 // Loads .env file contents into process.env so we can have access to the variables
 env.config();
 
@@ -19,11 +20,9 @@ passport.use(
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
         },
       async (accessToken, refreshToken, profile, cb) => {
-        //await listOfLabels(accessToken);
-        console.log(refreshToken);
-        await getLatestMessage(accessToken);
-        // return user object and store in session if successful or return error msg if unsuccessful 
+        // Create new user and store user data in database 
         const response = await createUser(profile, refreshToken, hashedPassword);
+        // return user object and store in session if successful or return error msg if unsuccessful 
         if(response.email){ // if a user object was returned
           const user = response;
           return cb(null, user);

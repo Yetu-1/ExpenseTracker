@@ -1,19 +1,20 @@
 import express from "express"
-const router = express.Router();
 import passport from "passport";
 import { getUserByEmail } from "../services/dbQueries.js";
 import bcrypt from "bcrypt";
 import bodyParser from "body-parser";
 
+const authRouter = express.Router();
+
 // router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: true }));
+authRouter.use(bodyParser.urlencoded({ extended: true }));
 
 // global scope variables
 const saltRounds = 10;
 let hashedPassword = '';
 
 // Logout Route to log out user
-router.get("/logout", (req, res) => {
+authRouter.get("/logout", (req, res) => {
   req.logout(function (err) {
     if (err) {
       return next(err);
@@ -23,7 +24,7 @@ router.get("/logout", (req, res) => {
 });
 
 // Route from Login/Sign up button
-router.get(
+authRouter.get(
     "/google",
     passport.authenticate("google", {
       accessType: "offline", // Ensure that Google provides a refresh token
@@ -32,7 +33,7 @@ router.get(
 );
 
 // redirect route from the passport authenticattion
-router.get(
+authRouter.get(
   "/google/home",
   passport.authenticate("google", {
     successRedirect: "/home",
@@ -40,7 +41,18 @@ router.get(
   })
 );
 
-router.post(
+
+authRouter.get("/home", (req, res) => {
+  res.send("User Successfully registered");
+});
+
+authRouter.get("/login", (req, res) => {
+  res.send("User register error login");
+});
+authRouter.get("/register", (req, res) => {
+  res.render("register.ejs");
+});
+authRouter.post(
   "/login",
   passport.authenticate("local", {
     successRedirect: "/api",
@@ -48,7 +60,7 @@ router.post(
   })
 );
 
-router.post("/register", async (req, res) => {
+authRouter.post("/register", async (req, res) => {
   const email = req.body.username;
   const password = req.body.password;
 
@@ -74,4 +86,4 @@ router.post("/register", async (req, res) => {
   }
 });
 
-export default router;
+export {authRouter, hashedPassword};

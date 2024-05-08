@@ -13,11 +13,8 @@ import "./services/auth.js"
 
 // import routes
 import userRouter from "./routes/indexROUTER.js"
-import authRouter from "./routes/authROUTER.js"
+import {authRouter} from "./routes/authROUTER.js"
 
-// global scope variables
-const saltRounds = 10;
-let hashedPassword = '';
 // Loads .env file contents into process.env so we can have access to the variables
 env.config();
 
