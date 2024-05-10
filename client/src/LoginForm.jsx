@@ -67,7 +67,7 @@ function LoginForm() {
             alignItems: 'center',
           }}
       >
-          <Typography component="h1" variant="h5" sx={{fontFamily: "McLaren"}}>
+          <Typography component="h1" variant="h5" sx={{fontFamily: "Red Hat Display", fontWeight: 700, fontStyle: "bold"}}>
             {sign.label}
           </Typography>
           <Box className="myForm" component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>

@@ -14,7 +14,6 @@ router.get("/register", (req, res) => {
     res.render("register.ejs");
 });
 
-
 router.get("/account", isAuth, (req, res) => {
     res.json(req.user);
 });

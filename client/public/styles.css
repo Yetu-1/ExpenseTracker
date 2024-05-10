@@ -19,6 +19,95 @@ form.login-form input{
 } */
 
 body {
-    background-color: #ffffff;
-    background-image: url("https://www.transparenttextures.com/patterns/clean-textile.png");
+    background-color: #083e9e;;
+    background-image: url("https://www.transparenttextures.com/patterns/checkered-pattern.png");
+}
+
+.app {
+  display: flex;
+  align-items: center;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  align-items: center;
+  line-height: 1.5;
+ 
+}
+.form{
+  display: flex;
+  width: 448px;
+  flex-direction: column;
+  font-family: "Red Hat Display";
+  font-style: normal;
+  align-items: center;
+}
+
+.form > p {
+  font-size: .875rem;
+  font-weight: 700;
+  color: white;
+}
+.input{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+  position: relative;
+}
+.input > input {
+  border: none;
+  color: #1a202c;
+  background-color: #edf2f7;
+  padding: 1rem;
+}
+.input > label {
+  color: #4a5568;
+  font-style: "bold";
+  font-weight: 700;
+  font-size: .75rem;
+  margin-bottom: .2rem;
+}
+
+.form-input{
+  background-color: #ffffff;
+  padding: 1rem 1rem;
+  border-bottom-right-radius: 1.25rem;
+  border-top-right-radius: 1.25rem;
+  border-top-left-radius: 1.25rem;
+  width: 100%;
+}
+.form-input > button {
+  width: 100%;
+  font-family: "Red Hat Display";
+  border: 0;
+  height: 2.3rem;
+  border-radius: 0dvh;
+  font-weight: bold;
+  border-bottom-right-radius: .5rem;
+  border-top-right-radius: .5rem;
+  border-top-left-radius: .5rem;
+  background-color: #0d60d8;
+  color: white;
+}
+
+.form-header {
+  display: flex;
+  flex-direction: column;
+  line-height: 24px;
+  align-items: center;
+}
+.form-header > h1 {
+  color: #083e9e;
+  margin-bottom: 5px;
+  font-size: 1.5rem;
+}
+.form-header > p {
+  font-family: "Karla", sans-serif;
+  font-style: normal;
+  font-size: .875rem;
+  margin: 0;
+  margin-bottom: 30px;
 }

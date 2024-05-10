@@ -2,6 +2,7 @@ import React, {useEffect, useState, useContext} from "react"
 import LoginForm from "./LoginForm";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { UserContext } from "./components/UserContext";
+import SignUp from "./components/SignUp.jsx";
 
 function App() {
   const [userData, setUserData] = useState({});
@@ -22,15 +23,15 @@ function App() {
   // access the user object in UserContex.jsx
   const user = useContext(UserContext)
   return (
-      <div>   
-        <LoginForm /> 
-        <h1>Home</h1> 
+      <div class="app">   
+        <SignUp/>
+        {/* <h1>Home</h1> 
         <p>First Name: {(typeof userData.fName === 'undefined')? (<p>Loading...</p>) : userData.fName} </p>
         <p>Last Name: {(typeof userData.fName === 'undefined')? (<p>Loading...</p>) : userData.lName}</p>
         <img src={(typeof userData.fName === 'undefined')? "null": userData.img} alt="profile" /> 
         <button onClick={googleLogin}>
       Sign in with Google
-    </button>
+    </button> */}
       {/* {user?.loggedIn? <h1>loggedIn</h1> : <h1>loggedOut</h1>} */}
       </div>
   );
