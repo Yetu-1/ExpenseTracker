@@ -3,12 +3,13 @@ import passport from "passport";
 import { getUserByEmail } from "../services/dbQueries.js";
 import bcrypt from "bcrypt";
 import bodyParser from "body-parser";
+import env from "dotenv"
 
 const authRouter = express.Router();
 
 // router.use(bodyParser.json());
 authRouter.use(bodyParser.urlencoded({ extended: true }));
-
+env.config();
 // global scope variables
 const saltRounds = 10;
 let hashedPassword = '';
@@ -36,7 +37,7 @@ authRouter.get(
 authRouter.get(
   "/google/home",
   passport.authenticate("google", {
-    successRedirect: "/home",
+    successRedirect: process.env.CLIENT_URL,
     failureRedirect: "/login",
   })
 );

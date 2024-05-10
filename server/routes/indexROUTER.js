@@ -16,7 +16,6 @@ router.get("/register", (req, res) => {
 
 
 router.get("/account", isAuth, (req, res) => {
-    console.log("hello again");
     res.json(req.user);
 });
 
