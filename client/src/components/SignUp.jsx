@@ -2,6 +2,12 @@ import React from "react"
 
 function SignUp() {
 
+    function googleLogin() {
+        // event.preventDefault();
+        const str = `http://localhost:4000/auth/google`;
+        window.open(str, "_self");
+    };
+      
     return (
         <div class="form">
         <div class="form-input">
@@ -19,7 +25,7 @@ function SignUp() {
                 <input></input>
             </div>
 
-            <button>LOG IN</button>
+            <button onClick={googleLogin} >LOG IN</button>
         </div>
         <p>Don't have an account? Register</p>
         <p>Forgot Password?</p>
