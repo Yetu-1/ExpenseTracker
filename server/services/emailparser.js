@@ -121,14 +121,7 @@ async function listOfLabels(accessToken) {
     return transactionInfo;
   }
 
-async function testRefreshToken() {
-  connectToDB(); 
-  const result = await dbs.query("SELECT * FROM users WHERE id = 16");
-  let user = result.rows[0];
-  const refreshToken = user.refreshtoken;
-  console.log(user);
-  console.log(refreshToken);
-
+async function testRefreshToken(refreshToken) {
   try{ 
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
@@ -138,9 +131,10 @@ async function testRefreshToken() {
     oauth2Client.setCredentials({
       refresh_token: refreshToken
     });
+    // get access token using refresh token
     const result = await oauth2Client.getAccessToken();
     const accessToken = result.token;
-    console.log(accessToken);
+    // console.log(accessToken);
 
     oauth2Client.setCredentials({ access_token: accessToken });
 

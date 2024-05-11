@@ -37,7 +37,7 @@ authRouter.get(
 authRouter.get(
   "/google/home",
   passport.authenticate("google", {
-    successRedirect: process.env.CLIENT_URL,
+    successRedirect: "/home",
     failureRedirect: "/login",
   })
 );
@@ -45,7 +45,7 @@ authRouter.get(
 authRouter.post(
   "/login",
   passport.authenticate("local", {
-    successRedirect: "/api",
+    successRedirect: "/home",
     failureRedirect: "/register",
   })
 );
