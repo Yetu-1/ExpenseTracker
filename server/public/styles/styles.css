@@ -73,6 +73,7 @@ body {
   border-top-right-radius: 1.25rem;
   border-top-left-radius: 1.25rem;
   width: 350px;
+  margin-bottom: 10px;
 }
 #form-btn {
   width: 100%;
