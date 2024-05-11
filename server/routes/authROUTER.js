@@ -50,6 +50,7 @@ authRouter.post(
   })
 );
 
+
 authRouter.post("/register", async (req, res) => {
   const email = req.body.username;
   const password = req.body.password;

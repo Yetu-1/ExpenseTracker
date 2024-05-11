@@ -1,6 +1,30 @@
-import React from "react"
+import {React, useState} from "react"
 
 function SignUp() {
+    const [user, setUser] = useState({
+        username: '',
+        password: '',
+    });
+
+    function handleChange(event) {
+        const {name, value} = event.target;
+        setUser((prevData) => {
+          return {
+            ...prevData, [name]: value
+          }
+        });  
+    }
+
+    function handleSubmit() {
+        console.log(user);
+        fetch("http://localhost:4000/login", {
+          method: 'POST',
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(user)
+        }).catch((error) => {
+          console.log(error);
+        });
+    }
 
     function googleLogin() {
         // event.preventDefault();
@@ -18,14 +42,14 @@ function SignUp() {
 
             <div class="input">
                 <label>Email</label>
-                <input></input>
+                <input name="username" type="email" onChange={handleChange} value={user.username}/>
             </div>
             <div class="input">
                 <label>Password</label>
-                <input></input>
+                <input name="password"  type="password" onChange={handleChange} value={user.password}/>
             </div>
 
-            <button onClick={googleLogin} >LOG IN</button>
+            <button onClick={handleSubmit} >LOG IN</button>
         </div>
         <p>Don't have an account? Register</p>
         <p>Forgot Password?</p>

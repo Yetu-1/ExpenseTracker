@@ -58,7 +58,8 @@ passport.use(
             }
           });
         } else {
-          return cb("User not found");
+          // User not found
+          return cb(null, false);
         }
       } catch (err) {
         console.log(err);

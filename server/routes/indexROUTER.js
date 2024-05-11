@@ -1,6 +1,9 @@
 import express from "express"
 const router = express.Router();
 import isAuth from "../isAuth.js";
+import bodyParser from "body-parser";
+
+router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get("/", (req, res) => {
     res.render("login.ejs");
