@@ -6,20 +6,21 @@ import { testRefreshToken } from "../services/emailparser.js";
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get("/", (req, res) => {
-    res.render("home.ejs");
+    res.render("login.ejs");
 });
 
 router.get("/register", (req, res) => {
     res.render("register.ejs");
 });
 
-router.get("/home", (req, res) => {
+router.get("/home", async (req, res) => {
     console.log(req.user.refreshtoken);
     const refreshToken = req.user.refreshtoken;
-    testRefreshToken(refreshToken)
+    const transaction = await testRefreshToken(refreshToken)
     if(req.isAuthenticated()) {
       console.log(req.user);
-      res.render("home.ejs",{fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
+      res.render("home.ejs", {user: req.user, transaction: transaction})
+    //   res.render("home.ejs",{fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
     }
 }); 
 

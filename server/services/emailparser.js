@@ -158,7 +158,7 @@ async function testRefreshToken(refreshToken) {
       // console.log("[MSG BASE64]", body);
       mailBody = new Buffer.from(body, 'base64').toString();
       // console.log("[MSG]: ", mailBody);
-      getTransactions(mailBody);   
+      return getTransactions(mailBody);   
     }catch(err){
       console.log("Error getting message by id!", err);
     }
