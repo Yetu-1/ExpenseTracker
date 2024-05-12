@@ -1,9 +1,30 @@
 <%- include('../partials/header') %>
 <div class="container mt-5">
-    <h1><%=locals.fName %>,</h1>
+    <!-- <h1><%=locals.fName %>,</h1>
     <p>Good morning, wash your hands 🌤</p>
     <p>Last Name: <%= locals.lName %> </p>
     <img style="border-radius: 50px" src=<%=locals.img%> />
-</div>
+</div>  -->
+    <div id="title">
+        <h2 class="greeting">Hello David</h1>
+        <p class="greeting">Do more with your finances</p>
+        <div class="img"></div>
+    </div>
 
+    <div class="account">
+        <div class="card">
+            <p>Current Balance</p>
+            <h2>₦322.59</h2>
+        </div>
+        <div class="card">
+            <p>Expenses this month</p>
+            <h2>₦23.59</h2>
+        </div>
+    </div>
+    <div class="chart">
+        <canvas id="myChart" style="width:300px;max-width:700px"></canvas>
+    </div>
+    <div class="list"></div>
+
+</div>
 <%- include('../partials/footer') %>

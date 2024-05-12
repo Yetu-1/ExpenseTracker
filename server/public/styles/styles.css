@@ -108,3 +108,21 @@ body {
   margin: 0;
   margin-bottom: 30px;
 }
+
+.account {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+.card {
+  width: 250px;
+  height: 140px;
+  background-color: pink;
+  border-bottom-right-radius: .5rem;
+  border-top-right-radius: .5rem;
+  border-top-left-radius: .5rem;
+  padding: 20px;
+}

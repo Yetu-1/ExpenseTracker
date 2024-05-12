@@ -6,7 +6,7 @@ import { testRefreshToken } from "../services/emailparser.js";
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get("/", (req, res) => {
-    res.render("login.ejs");
+    res.render("home.ejs");
 });
 
 router.get("/register", (req, res) => {
