@@ -22,32 +22,23 @@ function connectToDB() {
 
 let mailBody ='';
 
-async function listOfLabels(refreshToken) {
+async function fetchLabelId(accessToken) {
 
     try{ 
-      const oauth2Client = new google.auth.OAuth2(
-        process.env.GOOGLE_CLIENT_ID,
-        process.env.GOOGLE_CLIENT_SECRET,
-        "http://localhost:4000/auth/google/home", // Redirect URL
-      );
-      oauth2Client.setCredentials({
-        refresh_token: refreshToken
-      });
-      // get access token using refresh token
-      const result = await oauth2Client.getAccessToken();
-      const accessToken = result.token;
-      // console.log(accessToken);
-  
+      const oauth2Client = new google.auth.OAuth2();
       oauth2Client.setCredentials({ access_token: accessToken });
-  
+
       const gmail = google.gmail({version: 'v1', auth: oauth2Client});
     
       const response = await gmail.users.labels.list({
         userId: "me",
       });
-    
       const labels = response.data.labels;
-      console.log(labels);
+      // console.log(labels);
+      const transactionLabel = labels.find((label) => (label.name === "Transactions"));
+      console.log("Transactions id: ", transactionLabel.id);
+
+      // // print all the label names
       // if(!labels || labels.length == 0){
       //   console.log("No labels were found!");
       // }else {
@@ -58,7 +49,7 @@ async function listOfLabels(refreshToken) {
       // }
   
     }catch(err) {
-      console.log("Error fetching labels", err);
+      console.log("Error fetching label id", err);
     }
   }
   
@@ -149,14 +140,18 @@ async function testRefreshToken(refreshToken) {
     // console.log(accessToken);
 
     oauth2Client.setCredentials({ access_token: accessToken });
-
     const gmail = google.gmail({version: 'v1', auth: oauth2Client});
-  
+
+    const labelId = await fetchLabelId(accessToken);
+
     const response = await gmail.users.messages.list({
       userId: "me",
-      maxResults: 1,
+      labelIds: labelId,
+      // maxResults: ,
+      q: "is:unread",
     });
-  
+    console.log(response.data.messages);
+    
     let latestMessageId = response.data.messages[0].id;
     console.log("[MSG ID]: ", latestMessageId);
 
@@ -213,7 +208,7 @@ async function getMessagesByLabel(refreshToken) {
   }
 }
 
-export { getLatestMessage, listOfLabels, testRefreshToken}
+export { getLatestMessage, testRefreshToken}
 
 
 // sample transaction object
