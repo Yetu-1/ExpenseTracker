@@ -141,18 +141,13 @@ async function testRefreshToken(refreshToken) {
 
     oauth2Client.setCredentials({ access_token: accessToken });
     const gmail = google.gmail({version: 'v1', auth: oauth2Client});
-
-    const labelId = await fetchLabelId(accessToken);
-
     const response = await gmail.users.messages.list({
       userId: "me",
-      labelIds: labelId,
-      // maxResults: ,
-      q: "is:unread",
+      q: "is:unread from:gens@gtbank.com ", // filter messages by unread and from gtbank email (TODO: updated for other banks)
     });
     console.log(response.data.messages);
-    
-    let latestMessageId = response.data.messages[0].id;
+    // TODO: Add all the new transactions to the database
+    let latestMessageId = response.data.messages[1].id;
     console.log("[MSG ID]: ", latestMessageId);
 
     try{
