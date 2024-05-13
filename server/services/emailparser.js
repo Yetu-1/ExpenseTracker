@@ -5,9 +5,6 @@ import env from "dotenv"
 // Loads .env file contents into process.env so we can have access to the variables
 env.config();
 
-let mailBody ='';
-
-
 function getTransactions(rawHtml) {
   // console.log(rawHtml);
   let transactionInfo = {};
@@ -62,38 +59,37 @@ async function testRefreshToken(refreshToken) {
     const gmail = google.gmail({version: 'v1', auth: oauth2Client});
     const response = await gmail.users.messages.list({
       userId: "me",
-      q: "from:gens@gtbank.com ", // filter messages by unread and from gtbank email (TODO: updated for other banks)
+      q: "is:unread from:gens@gtbank.com ", // filter messages by unread and from gtbank email (TODO: updated for other banks)
     });
-
-    // TODO: Add all the new transactions to the database
-    let latestMessageId = response.data.messages[0].id;
-    //console.log("[MSG ID]: ", latestMessageId);
-
-    try{
-      const messageContent = await gmail.users.messages.get({
-        userId: "me",
-        id: latestMessageId,
-        format: "full",
-      });
-      console.log(response.data.messages.length);
-      const body = JSON.stringify(messageContent.data.payload.body.data);
-      // console.log("[MSG BASE64]", body);
-
-      // get transaction type credit/debit
-      const tran_type = getTransactionType(messageContent);
-      mailBody = new Buffer.from(body, 'base64').toString();
-      // console.log("[MSG]: ", mailBody);
-      const transaction =  constructTranactionObj(getTransactions(mailBody), tran_type);
-      console.log(transaction);
-    
-      return  transaction;
-    }catch(err){
-      console.log("Error getting message by id!", err);
-    }
-
+    // convert all unread messages to an array of transaction objects
+    const transactions = await emails_to_tranObjs(gmail, response.data.messages)
+    console.log(transactions);
+    return transactions;
   }catch(err) {
     console.log("Error fetching messages!", err);
   }
+}
+
+async function emails_to_tranObjs(gmail, messages) {
+    let transactions = [];
+    let transaction= {};
+    // parse and convert each message to a transaction object
+    for(let i = 0; i < messages.length; i++) {
+      try{
+        const messageContent = await gmail.users.messages.get({
+          userId: "me",
+          id: messages[i].id,
+          format: "full",
+        });
+        // parse message fr0m raw form into  object format
+        transaction = constructTransactionObj(messageContent);
+      }catch(err){
+        console.log("Error getting message by id!", err);
+      }
+      //push message onto transactions array
+      transactions.push(transaction);
+    }
+    return transactions;
 }
 
 function getTransactionType(messageContent) {
@@ -108,7 +104,16 @@ function getTransactionType(messageContent) {
   }
 }
 
-function constructTranactionObj(transaction, tran_type) {
+function constructTransactionObj(messageContent) {
+  // get transaction type credit/debit
+  const tran_type = getTransactionType(messageContent);
+  
+  const body = JSON.stringify(messageContent.data.payload.body.data);
+  // convert from base64 format to string
+  const mailBody = new Buffer.from(body, 'base64').toString();
+
+  const transaction =  getTransactions(mailBody);
+
   let transactionObj = {
     account: '',
     type: '',
