@@ -62,7 +62,7 @@ async function testRefreshToken(refreshToken) {
       q: "is:unread from:gens@gtbank.com ", // filter messages by unread and from gtbank email (TODO: updated for other banks)
     });
     // convert all unread messages to an array of transaction objects
-    const transactions = await emails_to_tranObjs(gmail, response.data.messages)
+    const transactions = await msgs_to_tranObjs(gmail, response.data.messages)
     console.log(transactions);
     return transactions;
   }catch(err) {
