@@ -13,8 +13,8 @@ function getTransactions(rawHtml) {
   let transactionInfo = {};
   // convert raw html into jquery object
   const $ = cheerio.load(rawHtml);
-  // const rawHtml = $('td'); // select Element
-
+  
+  // select all the tables in the html
   $('table').each((index, element) => {
     // if it is the second table: ( which contains all the transaction informantion)
     if(index === 1) {
@@ -39,8 +39,7 @@ function getTransactions(rawHtml) {
       });
     }
   });
-
-  console.log(transactionInfo);
+  // console.log(transactionInfo);
   return transactionInfo;
 }
 
@@ -63,12 +62,12 @@ async function testRefreshToken(refreshToken) {
     const gmail = google.gmail({version: 'v1', auth: oauth2Client});
     const response = await gmail.users.messages.list({
       userId: "me",
-      q: "is:unread from:gens@gtbank.com ", // filter messages by unread and from gtbank email (TODO: updated for other banks)
+      q: "from:gens@gtbank.com ", // filter messages by unread and from gtbank email (TODO: updated for other banks)
     });
-    console.log(response.data.messages);
+
     // TODO: Add all the new transactions to the database
-    let latestMessageId = response.data.messages[1].id;
-    console.log("[MSG ID]: ", latestMessageId);
+    let latestMessageId = response.data.messages[0].id;
+    //console.log("[MSG ID]: ", latestMessageId);
 
     try{
       const messageContent = await gmail.users.messages.get({
@@ -76,11 +75,18 @@ async function testRefreshToken(refreshToken) {
         id: latestMessageId,
         format: "full",
       });
+      console.log(response.data.messages.length);
       const body = JSON.stringify(messageContent.data.payload.body.data);
       // console.log("[MSG BASE64]", body);
+
+      // get transaction type credit/debit
+      const tran_type = getTransactionType(messageContent);
       mailBody = new Buffer.from(body, 'base64').toString();
       // console.log("[MSG]: ", mailBody);
-      return getTransactions(mailBody);   
+      const transaction =  constructTranactionObj(getTransactions(mailBody), tran_type);
+      console.log(transaction);
+    
+      return  transaction;
     }catch(err){
       console.log("Error getting message by id!", err);
     }
@@ -90,5 +96,39 @@ async function testRefreshToken(refreshToken) {
   }
 }
 
-export { getLatestMessage, testRefreshToken}
+function getTransactionType(messageContent) {
+  const snippet = messageContent.data.snippet;
+  // Checks if the snippet contains specified transaction type and return it
+  if (snippet.search('Debit') != -1) {
+    return 'Debit';
+  }else if( snippet.search('Credit') != -1) {
+    return 'Credit';
+  }else {
+    return '';
+  }
+}
+
+function constructTranactionObj(transaction, tran_type) {
+  let transactionObj = {
+    account: '',
+    type: '',
+    amount: '',
+    time: '',
+    description: '',
+    balance: '',
+    remarks: '',
+  };
+
+  transactionObj.account = transaction['Account Number'];
+  transactionObj.amount = transaction['Amount'];
+  transactionObj.type = tran_type;
+  transactionObj.time = transaction['Time of Transaction'];
+  transactionObj.balance = transaction['Current Balance'];
+  transactionObj.description = transaction['Description'];
+  transactionObj.remarks = transaction['Remarks'];
+
+  return transactionObj;
+}
+
+export { testRefreshToken }
   

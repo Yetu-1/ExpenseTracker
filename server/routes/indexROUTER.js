@@ -14,11 +14,11 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/home", async (req, res) => {
-    console.log(req.user.refreshtoken);
+    //console.log(req.user.refreshtoken);
     const refreshToken = req.user.refreshtoken;
     const transaction = await testRefreshToken(refreshToken)
     if(req.isAuthenticated()) {
-      console.log(req.user);
+      //console.log(req.user);
     //   res.render("home.ejs", {user: req.user, transaction: transaction})
     // //   res.render("home.ejs",{fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
     res.sendStatus(200);
