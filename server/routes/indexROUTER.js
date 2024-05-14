@@ -1,7 +1,8 @@
 import express from "express"
 const router = express.Router();
 import bodyParser from "body-parser";
-import { testRefreshToken } from "../services/emailparser.js";
+import { getLatestMsgs } from "../services/emailparser.js";
+import { addTransToDb } from "../services/dbQueries.js";
 
 router.use(bodyParser.urlencoded({ extended: true }));
 
@@ -16,7 +17,9 @@ router.get("/register", (req, res) => {
 router.get("/home", async (req, res) => {
     //console.log(req.user.refreshtoken);
     const refreshToken = req.user.refreshtoken;
-    const transaction = await testRefreshToken(refreshToken)
+    // get Latest messages and convert them into transaction objects
+    const transactions = await getLatestMsgs(refreshToken);
+    await addTransToDb(req.user, transactions);
     if(req.isAuthenticated()) {
       //console.log(req.user);
     //   res.render("home.ejs", {user: req.user, transaction: transaction})
