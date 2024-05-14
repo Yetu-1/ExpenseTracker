@@ -92,6 +92,25 @@ async function msgs_to_tranObjs(gmail, messages) {
     return transactions;
 }
 
+async function modifyMsgAsRead(gmail, messages) {
+  // remove "unread" lables from messages
+  for(let i = 0; i < messages.length; i++) {
+    try{
+      const messageContent = await gmail.users.messages.modify({
+        userId: "me",
+        id: messages[i].id,
+        format: "full",
+        "removeLabelIds": [
+          string
+        ]
+      });
+    }catch(err){
+      console.log("Error getting message by id!", err);
+    }
+  }
+  return transactions;
+}
+
 function getTransactionType(messageContent) {
   const snippet = messageContent.data.snippet;
   // Checks if the snippet contains specified transaction type and return it

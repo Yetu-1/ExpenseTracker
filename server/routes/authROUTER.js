@@ -29,7 +29,7 @@ authRouter.get(
     "/google",
     passport.authenticate("google", {
       accessType: "offline", // Ensure that Google provides a refresh token
-      scope: ["profile", "email", 'https://www.googleapis.com/auth/gmail.readonly'],
+      scope: ["profile", "email", 'https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/gmail.modify'],
     })
 );
 
