@@ -48,4 +48,18 @@ async function createUser(profile, refreshToken, hashedPassword) {
       }
 }
 
+async function addTransToDb(transactions, user) {
+  try {
+      // Add each transactions to db
+      transactions.forEach( async (transaction) => {
+        await db.query(
+          "INSERT INTO users (user_id, account, amount, type, time, description, remarks) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+          [transaction.account, transaction.amount, transaction.type, transaction.time, transaction.description, transaction.remarks]
+        );
+      });
+  } catch (err) {
+    return err;
+  }
+};
+
 export {connectToDB, createUser, getUserByEmail, db};

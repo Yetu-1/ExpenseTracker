@@ -40,7 +40,7 @@ function getTransactions(rawHtml) {
   return transactionInfo;
 }
 
-async function testRefreshToken(refreshToken) {
+async function getLatestMsgs(refreshToken) {
   try{ 
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
@@ -70,7 +70,7 @@ async function testRefreshToken(refreshToken) {
   }
 }
 
-async function emails_to_tranObjs(gmail, messages) {
+async function msgs_to_tranObjs(gmail, messages) {
     let transactions = [];
     let transaction= {};
     // parse and convert each message to a transaction object
@@ -135,5 +135,5 @@ function constructTransactionObj(messageContent) {
   return transactionObj;
 }
 
-export { testRefreshToken }
+export { getLatestMsgs }
   
