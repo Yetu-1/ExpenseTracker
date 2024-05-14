@@ -4,31 +4,6 @@ import env from "dotenv"
 
 // Loads .env file contents into process.env so we can have access to the variables
 env.config();
-async function fetchLabelId(gmail, label_name) {
-  try{ 
-      const response = await gmail.users.labels.list({
-        userId: "me",
-      });
-      const labels = response.data.labels;
-      console.log(labels);
-      // console.log(labels);
-      const label = labels.find((label) => (label.name === label_name));
-      console.log(`${label_name} id:`, label.id);
-
-      // // print all the label names
-      // if(!labels || labels.length == 0){
-      //   console.log("No labels were found!");
-      // }else {
-      //   console.log("Labels: ");
-      //   labels.forEach((label) => {
-      //     console.log(`- ${label.name}`); 
-      //   });
-      // }
-
-  }catch(err) {
-    console.log("Error fetching label id", err);
-  }
-}
 
 function getTransactions(rawHtml) {
   // console.log(rawHtml);
@@ -88,9 +63,16 @@ async function getLatestMsgs(refreshToken) {
       q: "is:unread from:gens@gtbank.com ", // filter messages by unread and from gtbank email (TODO: updated for other banks)
     });
     // convert all unread messages to an array of transaction objects
-    const transactions = await msgs_to_tranObjs(gmail, response.data.messages)
-    console.log(transactions);
-    return transactions;
+    const messages = response.data.messages;
+    if(messages){
+      const transactions = await msgs_to_tranObjs(gmail, messages);
+      console.log(transactions);
+      return transactions;
+    }else {
+      console.log("No new messages!");
+      return [];
+    }
+
   }catch(err) {
     console.log("Error fetching messages!", err);
   }
@@ -115,25 +97,25 @@ async function msgs_to_tranObjs(gmail, messages) {
       //push message onto transactions array
       transactions.push(transaction);
     }
+    await modifyMsgAsRead(gmail, messages); // remove unread tag from each messages
     return transactions;
 }
 
 async function modifyMsgAsRead(gmail, messages) {
-  // remove "unread" lables from messages
+  // remove "unread" labels from messages
   for(let i = 0; i < messages.length; i++) {
     try{
-      const messageContent = await gmail.users.messages.modify({
+      await gmail.users.messages.modify({
         userId: "me",
         id: messages[i].id,
         "removeLabelIds": [
-          string
+          'UNREAD'
         ]
       });
     }catch(err){
       console.log("Error removing unread label", err);
     }
   }
-  return transactions;
 }
 
 function getTransactionType(messageContent) {
@@ -177,6 +159,32 @@ function constructTransactionObj(messageContent) {
   transactionObj.remarks = transaction['Remarks'];
 
   return transactionObj;
+}
+
+async function fetchLabelId(gmail, label_name) {
+  try{ 
+      const response = await gmail.users.labels.list({
+        userId: "me",
+      });
+      const labels = response.data.labels;
+      console.log(labels);
+      // console.log(labels);
+      const label = labels.find((label) => (label.name === label_name));
+      console.log(`${label_name} id:`, label.id);
+
+      // // print all the label names
+      // if(!labels || labels.length == 0){
+      //   console.log("No labels were found!");
+      // }else {
+      //   console.log("Labels: ");
+      //   labels.forEach((label) => {
+      //     console.log(`- ${label.name}`); 
+      //   });
+      // }
+
+  }catch(err) {
+    console.log("Error fetching label id", err);
+  }
 }
 
 export { getLatestMsgs }
