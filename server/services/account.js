@@ -33,19 +33,19 @@ async function getExpenses(user_id) {
         let response = await db.query("SELECT amount FROM transactions WHERE user_id=$1 AND day=$2 AND type='Debit'", [
             user_id, date.getDate()
         ]);
-        expenses.day = addTransactions(response.rows);
+        expenses.day = calculateExpense(response.rows);
 
         // Get expenses for the month
         response = await db.query("SELECT amount FROM transactions WHERE user_id=$1 AND month=$2 AND type='Debit'", [
             user_id, month,
         ]);
-        expenses.month = addTransactions(response.rows);
+        expenses.month = calculateExpense(response.rows);
 
         // Get expenses for the year
         response = await db.query("SELECT amount FROM transactions WHERE user_id=$1 AND year=$2 AND type='Debit'", [
             user_id, date.getFullYear(),
         ]);
-        expenses.year = addTransactions(response.rows);
+        expenses.year = calculateExpense(response.rows);
     }catch(err) {
         console.log("Error calculating expenses!", err);
     }
@@ -53,7 +53,7 @@ async function getExpenses(user_id) {
     return expenses;
 }
 
-function addTransactions(amounts) {
+function calculateExpense(amounts) {
     let total = 0;
     for(let i = 0; i < amounts.length; i++) {
         const raw_amt = amounts[i].amount;
@@ -66,7 +66,7 @@ function addTransactions(amounts) {
 
 
 async function getCurrentBalance() {
-    const balance = '';
+    let balance = '';
 
     return balance;
 }
