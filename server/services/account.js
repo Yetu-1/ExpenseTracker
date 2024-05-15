@@ -16,7 +16,7 @@ const db = new pg.Client({
 // connect to the postgres database
 db.connect();
 
-async function getExpenses() {
+async function getExpenses(user_id) {
     const date = new Date();
     let month = (date.getMonth()+1);
     const expenses = {
@@ -24,27 +24,46 @@ async function getExpenses() {
         month: '',
         year: '',
     }
-    console.log((date.getMonth()+1));
-    console.log(date.getFullYear());
+
     if(month < 10) {
         month = '0' + (date.getMonth()+1);
     }
-    const rep = await db.query("SELECT amount FROM transactions WHERE type='Debit' AND day=$1", [
-        date.getDate(),
-    ]);
+    try{
+        // Get expenses for the day
+        let response = await db.query("SELECT amount FROM transactions WHERE user_id=$1 AND day=$2 AND type='Debit'", [
+            user_id, date.getDate()
+        ]);
+        expenses.day = addTransactions(response.rows);
 
-    console.log(rep.rows);
+        // Get expenses for the month
+        response = await db.query("SELECT amount FROM transactions WHERE user_id=$1 AND month=$2 AND type='Debit'", [
+            user_id, month,
+        ]);
+        expenses.month = addTransactions(response.rows);
 
-    const rep_2 = await db.query("SELECT amount FROM transactions WHERE month = $1 AND type = 'Debit'", [
-        month,
-    ]);
-    console.log(rep_2.rows);
-    const rep_3 = await db.query("SELECT amount FROM transactions WHERE year = $1 AND type = 'Debit'", [
-        date.getFullYear(),
-    ]);
-    console.log(rep_3.rows);
+        // Get expenses for the year
+        response = await db.query("SELECT amount FROM transactions WHERE user_id=$1 AND year=$2 AND type='Debit'", [
+            user_id, date.getFullYear(),
+        ]);
+        expenses.year = addTransactions(response.rows);
+    }catch(err) {
+        console.log("Error calculating expenses!", err);
+    }
+    console.log(expenses);
     return expenses;
 }
+
+function addTransactions(amounts) {
+    let total = 0;
+    for(let i = 0; i < amounts.length; i++) {
+        const raw_amt = amounts[i].amount;
+        // Convert from e.g 'NGN 1,500.30' to 1500.3
+        const amount = raw_amt.slice(3).replace(",", "");
+        total += parseFloat(amount); 
+    }
+    return total;
+}
+
 
 async function getCurrentBalance() {
     const balance = '';

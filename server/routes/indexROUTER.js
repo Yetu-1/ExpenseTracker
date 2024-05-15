@@ -21,7 +21,7 @@ router.get("/home", async (req, res) => {
     // get Latest messages and convert them into transaction objects
    // const transactions = await getLatestMsgs(refreshToken);
    // await addTransToDb(req.user, transactions);
-    await getExpenses();
+    await getExpenses(req.user.id);
     if(req.isAuthenticated()) {
       //console.log(req.user);
     //   res.render("home.ejs", {user: req.user, transaction: transaction})
