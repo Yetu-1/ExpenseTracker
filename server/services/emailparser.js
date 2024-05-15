@@ -60,8 +60,7 @@ async function getLatestMsgs(refreshToken) {
 
     const response = await gmail.users.messages.list({
       userId: "me",
-      // q: "is:unread from:gens@gtbank.com", // filter messages by unread and from gtbank email (TODO: updated for other banks)
-      q: "from:gens@gtbank.com",
+      q: "is:unread from:gens@gtbank.com", // filter messages by unread and from gtbank email (TODO: updated for other banks)
     });
     // convert all unread messages to an array of transaction objects
     const messages = response.data.messages;
@@ -146,14 +145,8 @@ function constructTransactionObj(messageContent) {
     year: '', description: '', balance: '', remarks: '',
   };
   // parse the input date original form = "13-05-2024 11:26"
-  // const date = dateParser(transaction['Time of Transaction']);
-  // console.log(date);
-  let date = {
-    day: '',
-    month: '',
-    year: '',
-    time: '',
-};
+  const date = dateParser(transaction['Time of Transaction']);
+
   transactionObj.account = transaction['Account Number'];
   transactionObj.amount = transaction['Amount'];
   transactionObj.type = tran_type;

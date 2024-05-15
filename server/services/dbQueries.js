@@ -53,7 +53,7 @@ async function addTransToDb(user, transactions) {
       // Add each transactions to db
       transactions.forEach( async (transaction) => {
         await db.query(
-          "INSERT INTO transactions (user_id, account, amount, type, time, day, month, year description, remarks) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+          "INSERT INTO transactions (user_id, account, amount, type, time, day, month, year, description, remarks) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
           [user.id, transaction.account, transaction.amount, transaction.type, transaction.time, transaction.day, 
             transaction.month, transaction.year, transaction.description, transaction.remarks]
         );
