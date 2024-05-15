@@ -141,19 +141,19 @@ function constructTransactionObj(messageContent) {
   const transaction =  getTransactions(mailBody);
 
   let transactionObj = {
-    account: '',
-    type: '',
-    amount: '',
-    time: '',
-    description: '',
-    balance: '',
-    remarks: '',
+    account: '', type: '', amount: '', time: '', day: '',month: '',
+    year: '', description: '', balance: '', remarks: '',
   };
+  // parse the input date original form = "13-05-2024 11:26"
+  const date = dateParser(transaction['Time of Transaction']);
 
   transactionObj.account = transaction['Account Number'];
   transactionObj.amount = transaction['Amount'];
   transactionObj.type = tran_type;
-  transactionObj.time = transaction['Time of Transaction'];
+  transactionObj.time = date.time;
+  transactionObj.day = date.day;
+  transactionObj.month = date.month;
+  transactionObj.year = date.year;
   transactionObj.balance = transaction['Current Balance'];
   transactionObj.description = transaction['Description'];
   transactionObj.remarks = transaction['Remarks'];
@@ -161,30 +161,20 @@ function constructTransactionObj(messageContent) {
   return transactionObj;
 }
 
-async function fetchLabelId(gmail, label_name) {
-  try{ 
-      const response = await gmail.users.labels.list({
-        userId: "me",
-      });
-      const labels = response.data.labels;
-      console.log(labels);
-      // console.log(labels);
-      const label = labels.find((label) => (label.name === label_name));
-      console.log(`${label_name} id:`, label.id);
-
-      // // print all the label names
-      // if(!labels || labels.length == 0){
-      //   console.log("No labels were found!");
-      // }else {
-      //   console.log("Labels: ");
-      //   labels.forEach((label) => {
-      //     console.log(`- ${label.name}`); 
-      //   });
-      // }
-
-  }catch(err) {
-    console.log("Error fetching label id", err);
-  }
+// parse the input date and return a date object
+function dateParser(input) {
+  let date = {
+      day: '',
+      month: '',
+      year: '',
+      time: '',
+  };
+  
+  date.day = input.substr(0, 2);
+  date.month = input.substr(3, 2);
+  date.year = input.substr(6, 4);
+  date.time = input.substr(11, 5);
+  return date;
 }
 
 export { getLatestMsgs }
