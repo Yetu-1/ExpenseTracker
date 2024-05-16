@@ -86,7 +86,7 @@ async function msgs_to_tranObjs(gmail, messages) {
      * Add in reverse order so that the latest message is at the bottom
      * This results in the oldest message being saved first in the database
     */
-    for(let i = messages.length; i >= 0; i--) {
+    for(let i = (messages.length-1); i >= 0; i--) {
       try{
         const messageContent = await gmail.users.messages.get({
           userId: "me",
@@ -101,7 +101,7 @@ async function msgs_to_tranObjs(gmail, messages) {
       //push message onto transactions array
       transactions.push(transaction);
     }
-    await modifyMsgAsRead(gmail, messages); // remove unread tag from each messages
+    //await modifyMsgAsRead(gmail, messages); // remove unread tag from each messages
     return transactions;
 }
 
