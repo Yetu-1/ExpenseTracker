@@ -101,7 +101,7 @@ async function msgs_to_tranObjs(gmail, messages) {
       //push message onto transactions array
       transactions.push(transaction);
     }
-    //await modifyMsgAsRead(gmail, messages); // remove unread tag from each messages
+    await modifyMsgAsRead(gmail, messages); // remove unread tag from each messages
     return transactions;
 }
 
