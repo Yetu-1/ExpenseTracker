@@ -158,7 +158,7 @@ function constructTransactionObj(messageContent) {
   transactionObj.day = date.day;
   transactionObj.month = date.month;
   transactionObj.year = date.year;
-  transactionObj.balance = transaction['Current Balance'];
+  transactionObj.balance = transaction['Available Balance'];
   transactionObj.description = transaction['Description'];
   transactionObj.remarks = transaction['Remarks'];
 

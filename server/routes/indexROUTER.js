@@ -26,10 +26,10 @@ router.get("/home", async (req, res) => {
     console.log("TOTAL EARNINGS", total_earnings);
 
     const last_10_transactions = await getLastTransactions(req.user.id);
-
+    console.log("LAST 10 TRANSACTIONS: ")
     console.log(last_10_transactions);
     const balance = await getCurrentBalance(req.user.id);
-    console.log(balance);
+    console.log("CURRENT BALANCE: ", balance);
 
     if(req.isAuthenticated()) {
       //console.log(req.user);
