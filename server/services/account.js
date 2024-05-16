@@ -1,4 +1,5 @@
 import env from "dotenv"
+import { response } from "express";
 import pg from "pg"
 
 // Loads .env file contents into process.env so we can have access to the variables
@@ -78,12 +79,14 @@ async function getCurrentBalance() {
     return balance;
 }
 
-async function getLastTransactions() {
-    const transactions = [];
-
-    const rep = await db.query("SELECT () FROM transactions WHERE day = $1", [
-        email,
+async function getLastTransactions(user_id) {
+    let transactions = [];
+    // Get last 10 transactions
+    const response = await db.query("SELECT amount , type, description, day, month, year, time FROM transactions WHERE user_id=$1 ORDER BY id DESC FETCH FIRST 10 ROWS ONLY;", [
+        user_id,
     ]);
+    transactions = response.rows;
+    console.log(transactions);
     return transactions;
 }
 

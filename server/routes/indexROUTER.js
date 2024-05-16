@@ -3,7 +3,7 @@ const router = express.Router();
 import bodyParser from "body-parser";
 import { getLatestMsgs } from "../services/emailparser.js";
 import { addTransToDb } from "../services/dbQueries.js";
-import { getTotalFinancials } from "../services/account.js";
+import { getTotalFinancials, getLastTransactions } from "../services/account.js";
 
 router.use(bodyParser.urlencoded({ extended: true }));
 
@@ -22,8 +22,12 @@ router.get("/home", async (req, res) => {
     const transactions = await getLatestMsgs(refreshToken);
     await addTransToDb(req.user, transactions);
     const {total_expenses, total_earnings} = await getTotalFinancials(req.user.id);
-    console.log(total_expenses);
-    console.log(total_earnings);
+    console.log("TOTAL EXPENSES", total_expenses);
+    console.log("TOTAL EARNINGS", total_earnings);
+
+    const last_10_transactions = await getLastTransactions(req.user.id);
+
+
 
     if(req.isAuthenticated()) {
       //console.log(req.user);

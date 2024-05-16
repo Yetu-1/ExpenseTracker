@@ -9,3 +9,8 @@ CREATE TABLE transactions (
 	description TEXT,
 	remarks TEXT
 )
+
+-- SELECT LAST 10 TRANSACTIONS
+SELECT amount , type, description, day, month, year, time FROM transactions WHERE user_id=25
+ORDER BY id DESC
+FETCH FIRST 10 ROWS ONLY;
