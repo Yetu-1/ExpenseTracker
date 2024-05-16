@@ -73,24 +73,33 @@ function calculateTotal(amounts) {
 }
 
 
-async function getCurrentBalance() {
+async function getCurrentBalance(user_id) {
     let balance = '';
-
+    // Fetch current balance
+    try {
+        const response = await db.query("SELECT balance FROM transactions WHERE user_id=$1 ORDER BY id DESC FETCH FIRST 1 ROWS ONLY;", [
+            user_id,
+        ]);
+        balance = response.rows[0].balance;
+        // console.log("balance");
+    }catch(err) {
+        console.log("Error fetching current balance!", err);
+    }
     return balance;
 }
 
 async function getLastTransactions(user_id) {
     let transactions = [];
-    // Get last 10 transactions
+    // fetch last 10 transactions
     try{
         const response = await db.query("SELECT amount , type, description, day, month, year, time FROM transactions WHERE user_id=$1 ORDER BY id DESC FETCH FIRST 10 ROWS ONLY;", [
             user_id,
         ]);
+        transactions = response.rows;
+        // console.log(transactions);
     }catch(err) {
         console.log("Error fetching last 10 transactions!", err);
     }
-    transactions = response.rows;
-    console.log(transactions);
     return transactions;
 }
 
