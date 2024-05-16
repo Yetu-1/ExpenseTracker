@@ -75,16 +75,22 @@ function calculateTotal(amounts) {
 
 async function getCurrentBalance() {
     let balance = '';
-
+    const response = await db.query("SELECT amount , type, description, day, month, year, time FROM transactions WHERE user_id=$1 ORDER BY id DESC FETCH FIRST 10 ROWS ONLY;", [
+        user_id,
+    ]);
     return balance;
 }
 
 async function getLastTransactions(user_id) {
     let transactions = [];
     // Get last 10 transactions
-    const response = await db.query("SELECT amount , type, description, day, month, year, time FROM transactions WHERE user_id=$1 ORDER BY id DESC FETCH FIRST 10 ROWS ONLY;", [
-        user_id,
-    ]);
+    try{
+        const response = await db.query("SELECT amount , type, description, day, month, year, time FROM transactions WHERE user_id=$1 ORDER BY id DESC FETCH FIRST 10 ROWS ONLY;", [
+            user_id,
+        ]);
+    }catch(err) {
+        console.log("Error getting last 10 transactions!", err);
+    }
     transactions = response.rows;
     console.log(transactions);
     return transactions;
