@@ -81,7 +81,11 @@ async function getLatestMsgs(refreshToken) {
 async function msgs_to_tranObjs(gmail, messages) {
     let transactions = [];
     let transaction= {};
-    // parse and convert each message to a transaction object
+    /*
+     * Parse and convert each message to a transaction object
+     * Add in reverse order so that the latest message is at the bottom
+     * This results in the oldest message being saved first in the database
+    */
     for(let i = messages.length; i >= 0; i--) {
       try{
         const messageContent = await gmail.users.messages.get({
@@ -89,7 +93,7 @@ async function msgs_to_tranObjs(gmail, messages) {
           id: messages[i].id,
           format: "full",
         });
-        // parse message fr0m raw form into  object format
+        // parse message from raw form into  object format
         transaction = constructTransactionObj(messageContent);
       }catch(err){
         console.log("Error getting message by id!", err);
