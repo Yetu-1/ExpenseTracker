@@ -82,7 +82,7 @@ async function msgs_to_tranObjs(gmail, messages) {
     let transactions = [];
     let transaction= {};
     // parse and convert each message to a transaction object
-    for(let i = 0; i < messages.length; i++) {
+    for(let i = messages.length; i >= 0; i--) {
       try{
         const messageContent = await gmail.users.messages.get({
           userId: "me",
