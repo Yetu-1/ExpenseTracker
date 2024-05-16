@@ -69,7 +69,7 @@ async function getLatestMsgs(refreshToken) {
       console.log(transactions);
       return transactions;
     }else {
-      console.log("No new messages!");
+      console.log("No new transactions!");
       return [];
     }
 

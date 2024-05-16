@@ -16,10 +16,18 @@ const db = new pg.Client({
 // connect to the postgres database
 db.connect();
 
-async function getExpenses(user_id) {
+async function getTotalFinancials(user_id) {
+    const total_expenses = await computeTransactions(user_id, "Debit");
+    const total_earnings = await computeTransactions(user_id, "Credit");
+
+    return {total_expenses: total_expenses, total_earnings: total_earnings};
+}
+
+async function computeTransactions(user_id, type) {
     const date = new Date();
     let month = (date.getMonth()+1);
-    const expenses = {
+
+    const total_amounts = {
         day: '',
         month: '',
         year: '',
@@ -29,31 +37,30 @@ async function getExpenses(user_id) {
         month = '0' + (date.getMonth()+1);
     }
     try{
-        // Get expenses for the day
-        let response = await db.query("SELECT amount FROM transactions WHERE user_id=$1 AND day=$2 AND type='Debit'", [
-            user_id, date.getDate()
+        // Get total transactions for the day
+        let response = await db.query(`SELECT amount FROM transactions WHERE user_id=$1 AND day=$2 AND type='${type}'`, [
+            user_id, date.getDate(),
         ]);
-        expenses.day = calculateExpense(response.rows);
+        total_amounts.day = calculateTotal(response.rows);
 
-        // Get expenses for the month
-        response = await db.query("SELECT amount FROM transactions WHERE user_id=$1 AND month=$2 AND type='Debit'", [
+        // Get total transactionfor the month
+        response = await db.query(`SELECT amount FROM transactions WHERE user_id=$1 AND month=$2 AND type='${type}'`, [
             user_id, month,
         ]);
-        expenses.month = calculateExpense(response.rows);
+        total_amounts.month = calculateTotal(response.rows);
 
-        // Get expenses for the year
-        response = await db.query("SELECT amount FROM transactions WHERE user_id=$1 AND year=$2 AND type='Debit'", [
+        // Get total transaction for the year
+        response = await db.query(`SELECT amount FROM transactions WHERE user_id=$1 AND year=$2 AND type='${type}'`, [
             user_id, date.getFullYear(),
         ]);
-        expenses.year = calculateExpense(response.rows);
+        total_amounts.year = calculateTotal(response.rows);
     }catch(err) {
         console.log("Error calculating expenses!", err);
     }
-    console.log(expenses);
-    return expenses;
+    return total_amounts;
 }
 
-function calculateExpense(amounts) {
+function calculateTotal(amounts) {
     let total = 0;
     for(let i = 0; i < amounts.length; i++) {
         const raw_amt = amounts[i].amount;
@@ -80,4 +87,4 @@ async function getLastTransactions() {
     return transactions;
 }
 
-export {getExpenses, getCurrentBalance, getLastTransactions}
+export {getTotalFinancials, getCurrentBalance, getLastTransactions}
