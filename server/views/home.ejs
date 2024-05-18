@@ -1,25 +1,120 @@
 <%- include('../partials/header') %>
-<div class="container mt-5">
-    <div id="title">
-        <h2 class="greeting">Hello <%=locals.user.firstname %></h1>
-        <p class="greeting">Do more with your finances</p>
-        <img style="border-radius: 50px" src=<%=locals.user.picture%> />
-    </div>
+<div class="container">
+    <!--------------------------SIDE BAR  ----------------------------->
+    <aside>
+        <div class="top">
+            <div class="logo">
+                <img src="../public/assets/logo2.png"/>
+                <h2>Expensify</h1>
+            </div>
 
-    <div class="account">
-        <div class="card">
-            <p>Current Balance</p>
-            <h2><%= locals.transaction['Current Balance']%></h2>
+            <div class="close" id="close-btn">
+                <span class="material-icons-sharp">close</span>
+            </div>
         </div>
-        <div class="card">
-            <p>Expenses this month</p>
-            <h2><%= locals.transaction.Amount%></h2>
-        </div>
-    </div>
-    <div class="chart">
-        <canvas id="myChart" style="width:300px;max-width:700px"></canvas>
-    </div>
-    <div class="list"></div>
 
+        <div class="sidebar">
+            <a href="#">
+                <span class="material-icons-sharp">grid_view</span>
+                <h3>Dashboard</h3>
+            </a>
+
+            <a href="#" class="active">
+                <span class="material-icons-sharp">person</span>
+                <h3>Accounts</h3>
+            </a>
+
+            <a href="#">
+                <span class="material-icons-sharp">insights</span>
+                <h3>Analytics</h3>
+            </a>
+
+            <a href="#">
+                <span class="material-icons-sharp">summarize</span>
+                <h3>Reports</h3>
+            </a>
+
+            <a href="#">
+                <span class="material-icons-sharp">settings</span>
+                <h3>Settings</h3>
+            </a>
+
+
+            <a href="#">
+                <span class="material-icons-sharp">logout</span>
+                <h3>Logout</h3>
+            </a>
+        </div>
+    </aside>
+
+    <!--------------------------MAIN SECTION  ----------------------------->
+    <main>
+        <h1>Dashboard</h1>
+
+        <div class="date">
+            <input type="date"/>
+        </div>
+
+        <div class="insights">
+            <!-------------------------- SALES CARD  ----------------------------->
+            <div class="sales">
+                <span class="material-icons-sharp">analytics</span>
+                <div class="card-info">
+                    <div class="left">
+                        <h3>Total Sales</h3>
+                        <h1>$23,000</h1>
+                    </div>
+                    <div class="progress">
+                        <svg>
+                            <circle cx="38", cy="38", r="36"></circle>
+                        </svg>
+                        <div class="number">
+                            <p>81%</p>
+                        </div>
+                    </div>
+                </div>
+                <small class="text-muted">Last 24 Hours</small>
+            </div>
+
+            <!-------------------------- EXPENSES CARD  ----------------------------->
+            <div class="expenses">
+                <span class="material-icons-sharp">bar_chart</span>
+                <div class="card-info">
+                    <div class="left">
+                        <h3>Total Expenses</h3>
+                        <h1>$263,234</h1>
+                    </div>
+                    <div class="progress">
+                        <svg>
+                            <circle cx="38", cy="38", r="36"></circle>
+                        </svg>
+                        <div class="number">
+                            <p>56%</p>
+                        </div>
+                    </div>
+                </div>
+                <small class="text-muted">Last 24 Hours</small>
+            </div>
+
+             <!-------------------------- INCOME CARD  ----------------------------->
+            <div class="income">
+                <span class="material-icons-sharp">stacked_line_chart</span>
+                <div class="card-info">
+                    <div class="left">
+                        <h3>Total Income</h3>
+                        <h1>$78,040</h1>
+                    </div>
+                    <div class="progress">
+                        <svg>
+                            <circle cx="38", cy="38", r="36"></circle>
+                        </svg>
+                        <div class="number">
+                            <p>21%</p>
+                        </div>
+                    </div>
+                </div>
+                <small class="text-muted">Last 24 Hours</small>
+            </div>
+    </main>
 </div>
 <%- include('../partials/footer') %>
