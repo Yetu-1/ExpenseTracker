@@ -133,10 +133,11 @@ body {
 }
 
 :root {
-  --color-primary: #7380ec;
+  --color-primary: #083e9e;
   --color-background: #f6f6f9;
   --color-light: rgba(132,139, 200, 0.18);
   --color-dark: #363949;
+  --color-white: #fff;
 
   --card-border-radius: 2rem;
   --border-radius-1: 0.4rem;
@@ -161,7 +162,7 @@ aside {
 }
 
 aside .top {
-  background-color: white;
+  background-color: var(--color-white);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -266,7 +267,7 @@ main .insights {
 }
 
 main .insights > div {
-  background-color: white;
+  background-color: var(--color-white);
   padding: var(--card-padding);
   border-radius: var(--card-border-radius);
   margin-top: 1rem;
@@ -282,7 +283,7 @@ main .insights > div span {
   background: coral;
   padding: 0.5rem;
   border-radius: 50%;
-  color: white;
+  color: var(--color-white);
   font-size: 2rem;
 }
 
@@ -369,8 +370,7 @@ main .recent-transactions h2 {
 }
 
 main .recent-transactions ul {
-  background: white;
-  width: 100%;
+  background: var(--color-white);
   border-radius: var(--card-border-radius);
   padding: var(--card-padding);
   box-shadow: var(--box-shadow);
@@ -380,4 +380,14 @@ main .recent-transactions ul {
 
 main .recent-transactions ul:hover {
   box-shadow: none;
+}
+
+main .recent-transactions ul li {
+  height: 2.8rem;
+  color: lightslategray;
+}
+
+main .recent-transactions a {
+  text-align: center;
+  display: block;
 }
