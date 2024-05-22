@@ -5,6 +5,7 @@ import env from "dotenv"
 import {createUser, getUserByEmail} from "./dbQueries.js"
 import bcrypt from "bcrypt";
 import { hashedPassword } from "../routes/authROUTER.js";
+import jwt from "jsonwebtoken"
 // Loads .env file contents into process.env so we can have access to the variables
 env.config();
 
@@ -22,7 +23,8 @@ passport.use(
         const response = await createUser(profile, refreshToken, hashedPassword);
         // return user object and store in session if successful or return error msg if unsuccessful 
         if(response.email){ // if a user object was returned
-          const user = response;
+          const user = response; 
+          //const access_token = jwt.sign(user, precess.env.ACCESS_TOKEN_SECRET);
           return cb(null, user);
         } else {
           return cb(response); // if an error occurred (response = err)
@@ -50,6 +52,8 @@ passport.use(
             } else {
               if (valid) {
                 console.log("User successfully logged in!");
+                const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+                console.log(access_token);
                 return cb(null, user);
               } else {
                 console.log("Incorrect password!")

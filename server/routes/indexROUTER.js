@@ -8,7 +8,7 @@ import { getTotalFinancials, getLastTransactions, getCurrentBalance } from "../s
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get("/", (req, res) => {
-    res.render("home.ejs");
+    res.render("login.ejs");
 });
 
 router.get("/register", (req, res) => {
@@ -33,9 +33,9 @@ router.get("/home", async (req, res) => {
 
     if(req.isAuthenticated()) {
       //console.log(req.user);
-      res.render("home.ejs", {expenses: total_expenses, earnings: total_earnings, transactions: last_10_transactions})
+      //res.render("home.ejs", {expenses: total_expenses, earnings: total_earnings, transactions: last_10_transactions})
     //   res.render("home.ejs",{fName: req.user.firstname, lName: req.user.lastname, img: req.user.picture});
-    //res.sendStatus(200);
+    res.sendStatus(200);
     }
 }); 
 
