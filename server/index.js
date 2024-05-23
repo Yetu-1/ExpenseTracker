@@ -4,6 +4,7 @@ import env from "dotenv"
 import passport from "passport";
 import session from "express-session";
 import { connectToDB } from "./services/dbQueries.js";
+import cors from "cors"
 // import my local strategy and google strategy
 import "./services/auth.js"
 
@@ -15,7 +16,7 @@ import {authRouter} from "./routes/authROUTER.js"
 env.config();
 
 const app = new express();
-const port = 3000;
+const port = 4000;
 
 // Session Initialization
 app.use(
@@ -38,6 +39,12 @@ app.use(passport.session());
 app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+app.use(cors({
+  origin: "*",
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 
 app.use("/", userRouter);
