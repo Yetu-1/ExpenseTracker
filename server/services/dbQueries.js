@@ -1,5 +1,6 @@
 import env from "dotenv"
 import pg from "pg"
+import jwt from "jsonwebtoken"
 
 // Loads .env file contents into process.env so we can have access to the variables
 env.config();
@@ -26,26 +27,33 @@ async function getUserByEmail(email) {
 }
 
 async function createUser(profile, refreshToken, hashedPassword) {
-    try {
-        // Check if user already exists in the database
-        const result = await db.query("SELECT * FROM users WHERE email = $1", [
-          profile.email, 
-        ]);
+  try {
+      // Check if user already exists in the database
+      const result = await db.query("SELECT * FROM users WHERE email = $1", [
+        profile.email, 
+      ]);
 
-        let user = result.rows[0];
+      let user = result.rows[0];
 
-        if (result.rows.length === 0) {
-          // if user does not exist add new user to database
-          const rep = await db.query(
-            "INSERT INTO users (email, password, firstname, lastname, picture, refreshToken) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-            [profile.email, hashedPassword, profile.given_name, profile.family_name, profile._json.picture, refreshToken]
-          );
-          user = rep.rows[0];
-        }
-        return user;
-      } catch (err) {
-        return err;
+      if (result.rows.length === 0) {
+        // if user does not exist add new user to database
+        const rep = await db.query(
+          "INSERT INTO users (email, password, firstname, lastname, picture, refreshToken) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+          [profile.email, hashedPassword, profile.given_name, profile.family_name, profile._json.picture, refreshToken]
+        );
+        user = rep.rows[0];
+
+        // Generate jwt refresh token
+        const jwt_token = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
+        // save refresh token in database
+        await db.query(
+          "UPDATE users SET jwt = $1 WHERE id = $2",[jwt_token, user.id]
+        );
       }
+      return user;
+    } catch (err) {
+      return err;
+    }
 }
 
 async function addTransToDb(user, transactions) {
