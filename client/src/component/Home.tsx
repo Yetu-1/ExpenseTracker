@@ -6,7 +6,7 @@ import './Home.css'
 
 export function Home() {
     const location = useLocation();
-
+    
     useEffect(() => {
         // Extract the token from the URL query parameter
         const queryParams = new URLSearchParams(location.search);
