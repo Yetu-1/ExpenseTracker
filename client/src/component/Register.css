@@ -1,0 +1,73 @@
+.signup-card {
+    width: 459px;
+    height: 432px;
+    border-radius: 20px;
+    background-color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 100px;
+}
+
+.title {
+    font-family: "Style Script", cursive;
+    font-size: 42px;
+}
+
+#signup-b {
+    width: 400px;
+    height: 60px;
+    background-color: #ec775f;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    color: white;
+    gap: 50px;
+}
+
+#signup-b:hover {
+    background-color: #EF9E8A;
+}
+
+#signup-b > h2 {
+    font-size: larger;
+}
+
+#google-logo {
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (max-width: 430px) {
+    .signup-card{
+        width: 300px;
+        height: 382px;
+        padding: 20px;
+    }
+
+    #signup-b {
+        width: 300px;
+        height: 40px;
+
+    }
+
+    #signup-b > h2 {
+        font-size: small;
+    }
+    #google-logo {
+        width: 30px;
+        height: 30px;
+    }
+    #google-logo svg {
+        width: 25px;
+        height: 25px;
+    }
+}

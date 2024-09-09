@@ -16,7 +16,7 @@ import {authRouter} from "./routes/authROUTER.js"
 env.config();
 
 const app = new express();
-const port = 4000;
+const port = 3000;
 
 // Session Initialization
 app.use(

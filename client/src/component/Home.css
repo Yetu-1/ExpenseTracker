@@ -1,0 +1,116 @@
+body {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fffaf5;
+    font-family: "DM Sans", sans-serif;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 23px;
+    width: 539px;
+    height: 660px;
+  }
+  
+  #balance-card {
+    width: 479px;
+    height: 64px;
+    border-radius: 16px;
+    background-color: #ec775f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px;
+    color: white;
+  }
+  
+  h1, h2, p {
+    margin: 0px;
+  }
+  h2 {
+    font-size: 32px;
+  }
+  #balance {
+    margin-top: 5px;
+    font-size: 32px;
+  }
+  
+  #expense-card {
+    width: 459px;
+    height: 432px;
+    border-radius: 20px;
+    background-color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+  }
+  
+  #expense-card > h2,h1 {
+    color: #382314;
+  }
+  
+  #footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .brown {
+    color: #93867b;
+  }
+  
+  
+  #percentage {
+    padding-left: 71px;
+    font-weight: 700;
+    color: #382314;
+  }
+  
+  @media only screen and (max-width: 430px) {
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 340px;
+      height:  540px;
+    }
+  
+    #balance-card {
+      width: 296px;
+      height: 56px;
+      padding: 22px;
+    }
+  
+    #expense-card {
+      width: 300px;
+      height: 382px;
+      padding: 20px;
+    }
+  
+    #balance {
+      margin-top: 5px;
+      font-size: 22px;
+    }
+  
+    #logo svg {
+      width: 60px;
+      height: 40px;
+    }
+  
+    #percentage {
+      padding-left: 59px;
+    }
+  
+    h1, h2 {
+      font-size: 22px;
+    }
+  
+    p {
+      font-size: small;
+    }
+  }

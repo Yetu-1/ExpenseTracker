@@ -40,20 +40,21 @@ function getTransactions(rawHtml) {
   return transactionInfo;
 }
 
-async function getLatestMsgs(refreshToken) {
+async function getLatestMsgs(accessToken) {
   try{ 
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      "http://localhost:4000/auth/google/home", // Redirect URL
+      process.env.GOOGLE_CALLBACK_URL, // Redirect URL
     );
-    oauth2Client.setCredentials({
-      refresh_token: refreshToken
-    });
-    // get access token using refresh token
-    const result = await oauth2Client.getAccessToken();
-    const accessToken = result.token;
-    // console.log(accessToken);
+    // use Refresh Token to get access token
+    // oauth2Client.setCredentials({
+    //   refresh_token: refreshToken
+    // });
+    // // get access token using refresh token
+    // const result = await oauth2Client.getAccessToken();
+    // const accessToken = result.token;
+    // // console.log(accessToken);
 
     oauth2Client.setCredentials({ access_token: accessToken });
     const gmail = google.gmail({version: 'v1', auth: oauth2Client});

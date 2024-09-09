@@ -26,7 +26,7 @@ async function getUserByEmail(email) {
   return rep
 }
 
-async function createUser(profile, refreshToken, hashedPassword) {
+async function createUser(profile, accessToken) {
   try {
       // Check if user already exists in the database
       const result = await db.query("SELECT * FROM users WHERE email = $1", [
@@ -38,8 +38,8 @@ async function createUser(profile, refreshToken, hashedPassword) {
       if (result.rows.length === 0) {
         // if user does not exist add new user to database
         const rep = await db.query(
-          "INSERT INTO users (email, password, firstname, lastname, picture, refreshToken) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-          [profile.email, hashedPassword, profile.given_name, profile.family_name, profile._json.picture, refreshToken]
+          "INSERT INTO users (email, firstname, lastname, picture, refreshToken) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+          [profile.email, profile.given_name, profile.family_name, profile._json.picture, refreshToken]
         );
         user = rep.rows[0];
 
@@ -50,7 +50,7 @@ async function createUser(profile, refreshToken, hashedPassword) {
           "UPDATE users SET jwt = $1 WHERE id = $2",[jwt_token, user.id]
         );
       }
-      return user;
+      return {email: user.email, firstname: user.firstname, lastname: user.lastname, jwt: user.jwt, token: accessToken}
     } catch (err) {
       return err;
     }
