@@ -67,7 +67,7 @@ async function getLatestMsgs(accessToken) {
     const messages = response.data.messages;
     if(messages){
       const transactions = await msgs_to_tranObjs(gmail, messages);
-      console.log(transactions);
+      // console.log(transactions);
       return transactions;
     }else {
       console.log("No new transactions!");

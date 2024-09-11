@@ -6,7 +6,7 @@ const colors = {
     cyan: "#76b5bc",
     orange: "#ec775f",
 }
-const days = ["mon", "tue", "wed", "thurs", "fri", "sat", "sun"]
+const days = ["sun", "mon", "tue", "wed", "thurs", "fri", "sat"]
 
 const data = [
     {
@@ -27,7 +27,7 @@ const data = [
     },
     {
       "day": "fri",
-      "amount": 93.39
+      "amount": 180
     },
     {
       "day": "sat",
@@ -40,11 +40,29 @@ const data = [
 ]
 
 
-export function Chart() {
+export function Chart(props : { expenses: {day : number, amount: number}[] }) {
+    // maps amount from one range to another
+    let max = 0;
+    for(let i = 0; i < props.expenses.length; i++) {
+      if (props.expenses[i].amount > max)
+        max = props.expenses[i].amount;
+    }
+    const date = new Date();
+    let day_idx = date.getDay();
+
+    function map( x: number, in_min: number, in_max: number, out_min: number, out_max: number) {
+      return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
     return (
         <div className="chart">
-            {data.map((day) => {
-                return <Bar key={day.day} day={day.day} height={day.amount} amount='11,543,234' />
+            {props.expenses.map((day) => {
+                const bar_height = map( day.amount, 0, max, 0, 180)
+                if (day_idx == 6)
+                  day_idx = 0;
+                else 
+                  day_idx++
+                let day_text = days[day_idx] // 
+                return <Bar key={day.day} day={day_text} height={bar_height} amount={day.amount.toLocaleString()} />
             })}
         </div>
     )

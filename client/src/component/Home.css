@@ -18,7 +18,7 @@ body {
   
   #balance-card {
     width: 479px;
-    height: 64px;
+    height: 70px;
     border-radius: 16px;
     background-color: #ec775f;
     display: flex;
@@ -70,7 +70,28 @@ body {
     font-weight: 700;
     color: #382314;
   }
-  
+
+  #accounts-card {
+    position: absolute;
+    padding-top: 5px;
+    display: flex;
+    gap: 5px;
+  }
+  .account-button {
+    background-color: rgba(255, 255, 255, 0.08);
+    width: 110px;
+    text-align: center;
+    border-radius: 10px;
+  }
+
+  .account-button:hover {
+    background-color: rgba(218, 39, 39, 0.3);
+  }
+
+  #all-accounts-button {
+    width: 40px;
+  }
+
   @media only screen and (max-width: 430px) {
     .container {
       display: flex;
@@ -82,7 +103,7 @@ body {
   
     #balance-card {
       width: 296px;
-      height: 56px;
+      height: 62px;
       padding: 22px;
     }
   

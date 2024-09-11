@@ -1,10 +1,7 @@
 import express from "express"
 import passport from "passport";
-import { getUserByEmail } from "../services/dbQueries.js";
-import bcrypt from "bcrypt";
 import bodyParser from "body-parser";
 import env from "dotenv"
-import jwt from "jsonwebtoken";
 
 const authRouter = express.Router();
 
@@ -32,7 +29,7 @@ authRouter.get(
         return next(err);
       }
       //TODO: create jwt token and redirect to `http://your-frontend-url.com/dashboard?token=${token}`
-      res.redirect(`${process.env.CLIENT_CALLBACK_URL}?firstname=${user.firstname}&lastname=${user.lastname}&token=${user.token}&jwt=${user.jwt}&email=${user.email}`);
+      res.redirect(`${process.env.CLIENT_CALLBACK_URL}?firstname=${user.firstname}&lastname=${user.lastname}&jwt=${user.jwt}&email=${user.email}`);
     });
   }
 );
