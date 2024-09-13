@@ -110,8 +110,6 @@ async function computePercentExpIncrease(user_id, current_account, accounts) {
         curr_month_expenses = await computeMonthExpenses(user_id, current_account, month);
         prev_month_expenses = await computeMonthExpenses(user_id, current_account, month-1);
     }
-    console.log(curr_month_expenses);
-    console.log(prev_month_expenses)
     percent_increase = ((curr_month_expenses-prev_month_expenses)/prev_month_expenses) * 100;
     if (percent_increase == Infinity) {
         return 0;

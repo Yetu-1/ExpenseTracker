@@ -34,12 +34,20 @@ router.post("/", authenticate, async (req, res) => {
     let accounts = [];
     const current_account = req.body.current_account;
     let percent_exp_increase = 0;
+    let transactions = [];
 
     if(req.user.id) {
         const token = await getUserAccessToken(req.user.id);
         accounts = await getAccounts(req.user.id);
-        // const transactions = await getLatestMsgs(token);
-        // await addTransToDb(req.user.id, transactions); // doesn't matter if transactions is an empty array cause nothing would be added to the array if so.
+        await getLatestMsgs(token).then(async(trans) => {
+                if(trans.length > 0){
+                    console.log("new transactions")
+                    transactions = trans;
+                    await addTransToDb(req.user.id, transactions); // doesn't matter if transactions is an empty array cause nothing would be added to the array if so.
+                }
+            }
+        );
+
         if(current_account == "All"){
             for(let i = 0; i < accounts.length; i++) {
                 balance += await getCurrentBalance(req.user.id, accounts[i].account);
