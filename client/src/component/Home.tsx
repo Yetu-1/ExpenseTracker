@@ -85,7 +85,7 @@ export function Home() {
                 <h2 id="balance">₦{balance.toLocaleString()}</h2>
                 <div id="accounts-card">
                     <div className="account-button" id="all-accounts-button" onClick={()=> {fetchData(user, "All")}} 
-                        style={{backgroundColor: (currAccount=="All")? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0.08)"}}>
+                        style={{backgroundColor: (currAccount=="All")? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0.08)", cursor: "pointer"}}>
                         <p>All</p>
                     </div>
                     {accounts.map((account) => {
@@ -94,7 +94,7 @@ export function Home() {
                         }
                         return (
                             <div key={account.account} className="account-button" onClick={handleClick} 
-                                style={{backgroundColor: (currAccount==account.account)? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0.08)"}}>
+                                style={{backgroundColor: (currAccount==account.account)? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0.08)", cursor: "pointer"}}>
                                 <p>{account.account}</p>
                             </div>
                         )
